@@ -21,11 +21,11 @@ class Pipeline:
         分发
         :return: 无
         '''
+        print 'Parser.run()'
         if self.task['parser'] == 'demo':
             self.save_info('demo_info')
         else:
             pass
-
         #将本条task的状态置为done
         if '_id' in self.task.keys():
             self.taskUtils.set_state(self.task['_id'],'done')

@@ -28,10 +28,11 @@ class Scheduler:
         while True:
             #获取一条待执行的Task
             task = self.taskUtils.get_ready()
-            print(task)
             if task is not None and len(task)>0:
                 #更新task的state
                 self.taskUtils.set_state(task['_id'],'doing')
+                print '-----------------------------'
+                print 'start'+str(task)
                 #启动Downloader线程
                 downloader=Downloader(task)
                 downloader.start()

@@ -4,7 +4,8 @@
 """
 from MongoUtils import MongoUtils
 import os
-from PropertiesUtils import PropertiesUtils
+from configs.Settings import *
+import configs.Settings
 
 class InitUtils:
     def __init__(self):
@@ -12,9 +13,7 @@ class InitUtils:
         pass
 
     def init(self):
-        conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs.properties')
-        propertiesUtils = PropertiesUtils(conf_file)
-        db = propertiesUtils.getValue('MONGO_DB')
+        db = Settings.MONGO_DB
         self.mongoUtils.clear_all(db)
 
     def __del__(self):

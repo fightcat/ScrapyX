@@ -52,7 +52,7 @@ class Parser:
                 'parent_id':item['_id'],
                 'parent_name':item['name']
             }
-            self.taskUtils.insert_one(parser='next',request='http://www.baidu.com'+node.get('href'),parent=parent)
+            self.taskUtils.insert_one(parser='next',request=node.get('href'),parent=parent)
         #解析结果存入task
         self.task['results']=items
 

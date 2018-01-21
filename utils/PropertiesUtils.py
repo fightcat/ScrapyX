@@ -1,6 +1,6 @@
 # coding:utf-8
 '''
-读取properties配置文件，输出dict
+读取properties配置文件，输出dict (过时的)
 1.获取response
 2.下载文件
 '''

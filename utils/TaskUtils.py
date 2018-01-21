@@ -14,7 +14,7 @@ tasks
 
 from MongoUtils import MongoUtils
 import os
-from PropertiesUtils import PropertiesUtils
+import configs.Settings as Settings
 
 class TaskUtils:
 
@@ -23,10 +23,8 @@ class TaskUtils:
         self.mongoUtils = MongoUtils()
         count=self.mongoUtils.count(collection_name='tasks')
         if count==0:
-            conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs.properties')
-            propertiesUtils = PropertiesUtils(conf_file)
-            first_task_parser = propertiesUtils.getValue('first_task_parser')
-            first_task_url = propertiesUtils.getValue('first_task_url')
+            first_task_parser = Settings.FIRST_TASK_PARSER
+            first_task_url = Settings.FIRST_TASK_URL
             insert_data = {
                 "parser": first_task_parser,
                 "request": first_task_url,

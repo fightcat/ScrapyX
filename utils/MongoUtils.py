@@ -2,9 +2,10 @@
 """
 mongo操作工具
 """
+
 import os
 from pymongo import MongoClient
-from PropertiesUtils import PropertiesUtils
+import configs.Settings as Settings
 
 class MongoUtils():
 
@@ -16,14 +17,12 @@ class MongoUtils():
         :param db_name: 数据库的名称
         :return: 无返回值
         """
-        conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs.properties')
-        propertiesUtils = PropertiesUtils(conf_file)
         if host is None:
-            host=propertiesUtils.getValue('MONGO_HOST')
+            host=Settings.MONGO_HOST
         if port is None:
-            port = propertiesUtils.getValue('MONGO_PORT')
+            port = Settings.MONGO_PORT
         if db_name is None:
-            db_name = propertiesUtils.getValue('MONGO_DB')
+            db_name = Settings.MONGO_DB
         try:
             self.client = None
             self.client = MongoClient(host, int(port))

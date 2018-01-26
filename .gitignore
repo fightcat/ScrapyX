@@ -8,4 +8,4 @@ __pycache__
 *.pyc
 
 #忽略Test.py测试技术的源码文件
-Test.py
+/Test.py

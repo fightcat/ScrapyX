@@ -6,12 +6,12 @@ ini文件结构如下：
 option1 : value1
 option2 : value2
 '''
-import ConfigParser
+import configparser
 import os
 
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','configs','configs.ini')
-config.read(conf_file)
+config.read(conf_file,encoding='UTF-8')
 
 class ConfigUtils(object):
     def __init__(self):
@@ -68,4 +68,4 @@ class ConfigUtils(object):
 
 if __name__ == '__main__':
     items=ConfigUtils.getItems('scheduler')
-    print items
+    print (items)

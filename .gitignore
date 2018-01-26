@@ -1,5 +1,11 @@
 #忽略.idea文件夹
 .idea
 
+#忽略编译缓存
+__pycache__
+
 #忽略所有扩展名为pyc的编译后字节码文件
 *.pyc
+
+#忽略Test.py测试技术的源码文件
+Test.py

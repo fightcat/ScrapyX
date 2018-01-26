@@ -12,7 +12,7 @@ tasks
 }
 """
 
-from MongoUtils import MongoUtils
+from utils.MongoUtils import MongoUtils
 import os
 import configs.Settings as Settings
 
@@ -35,7 +35,7 @@ class TaskUtils:
 
     def get_ready(self):
         '''
-        获取一条待执行的任务（准备状态）
+        获取一条待执行的任务（准备状态），并置为doing状态
         :return: dict 单条任务
         '''
         # 过滤条件，不存在state字段或state=ready
@@ -49,8 +49,14 @@ class TaskUtils:
                 }
             ]
         }
+        # 更新条件，将state=doing
+        update_dict={
+            '$set':{
+                'state':'doing'
+            }
+        }
         # 执行mongo操作
-        task = self.mongoUtils.find_one(collection_name='tasks', filter_dict=filter_dict)
+        task = self.mongoUtils.find_and_update(collection_name='tasks', filter_dict=filter_dict, update_dict=update_dict)
         return task
 
     def set_state(self,id,state):

@@ -6,6 +6,9 @@ mongo操作工具
 import os
 from pymongo import MongoClient
 import configs.Settings as Settings
+import time
+import datetime
+import traceback
 
 class MongoUtils():
 
@@ -54,19 +57,28 @@ class MongoUtils():
         更新表记录，默认返回false
         :param collection_name: str 集合名
         :param filter_dict: dict 过滤条件，如{'campaignId':{'$in':[1,2,3]}}
-        :param update_dict: dict 更新的字段，如{'$set':{status_key:0，'campaign.status':1},{'$unset':'campaign.name':'test_camp'}}
+        :param update_dict: dict 更新的字段，如{'$set':{'status_key:0','campaign.status':1},{'$unset':'campaign.name':'test_camp'}}
         :param insert: bool 如果需要更新的记录不存在是否插入
         :param multi: bool 是否更新所有符合条件的记录， False则只更新一条，True则更新所有
         :return: bool 是否更新成功
         """
         result = False
         try:
+            timestamp = time.time()
+            uptimestamp = int(round(timestamp * 1000))
+            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            if '$set' in update_dict:
+                update_dict['$set']['uptime']=uptime
+                update_dict['$set']['uptimestamp'] = uptimestamp
+            else:
+                update_dict['$set']={'uptime':uptime,'uptimestamp':uptimestamp}
             collection = self.database.get_collection(collection_name)
             collection.update(filter_dict, update_dict, insert, multi)
             result = True
             print("[INFO] update success!")
         except Exception as e:
             print('update failed: %s' % e)
+            traceback.print_exc()
         finally:
             return result
 
@@ -79,6 +91,19 @@ class MongoUtils():
         """
         result = False
         try:
+            timestamp = time.time()
+            uptimestamp = int(round(timestamp * 1000))
+            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            if type(insert_data)==dict:
+                insert_data['uptime'] = uptime
+                insert_data['uptimestamp'] = uptimestamp
+            elif type(insert_data)==list:
+                items=[]
+                for data in insert_data:
+                    data['uptime'] = uptime
+                    data['uptimestamp'] = uptimestamp
+                    items.append(data)
+                insert_data=items
             collection = self.database.get_collection(collection_name)
             collection.insert(insert_data)
             result = True
@@ -116,6 +141,11 @@ class MongoUtils():
         """
         result = False
         try:
+            timestamp = time.time()
+            uptimestamp = int(round(timestamp * 1000))
+            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            replace_data['uptime'] = uptime
+            replace_data['uptimestamp'] = uptimestamp
             collection = self.database.get_collection(collection_name)
             collection.replace_one(filter_dict,replace_data)
             result = True
@@ -171,6 +201,40 @@ class MongoUtils():
         finally:
             return result
 
+    def find_and_update(self, collection_name, filter_dict, update_dict, insert=False, multi=False):
+        """
+        查找并更新表记录，默认返回false，保证原子性
+        :param collection_name: str 集合名
+        :param filter_dict: dict 过滤条件，如{'campaignId':{'$in':[1,2,3]}}
+        :param update_dict: dict 更新的字段，如{'$set':{status_key:0，'campaign.status':1},{'$unset':'campaign.name':'test_camp'}}
+        :param insert: bool 如果需要更新的记录不存在是否插入
+        :param multi: bool 是否更新所有符合条件的记录， False则只更新一条，True则更新所有
+        :return: Document 更新成功后的文档
+        """
+        result = None
+        try:
+            timestamp = time.time()
+            uptimestamp = int(round(timestamp * 1000))
+            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            if '$set' in update_dict:
+                update_dict['$set']['uptime'] = uptime
+                update_dict['$set']['uptimestamp'] = uptimestamp
+            else:
+                update_dict['$set'] = {'uptime': uptime, 'uptimestamp': uptimestamp}
+            collection = self.database.get_collection(collection_name)
+            document=collection.find_and_modify(filter_dict, update_dict, insert, multi)
+            result = document
+            if result is None:
+                print("[INFO] find and update nothing!")
+            else:
+                print("[INFO] find and update success!")
+        except Exception as e:
+            print('find and update failed: %s' % e)
+        finally:
+            return result
+
+
+
     def clear_all(self,db_name):
         '''
         删除数据库
@@ -185,9 +249,19 @@ class MongoUtils():
         """
         if self.client:
             self.client.close()
-            print 'closed mongo connection'
+            print ('closed mongo connection')
 
 if __name__ == '__main__':
+    '''
+    update_dict={}
+    #update_dict={'$set': {'uptime': '2018-01-25 17:38:33.522000', 'uptimestamp': 1516873113997000.0}}
     mongoUtils= MongoUtils()
-    cnt=mongoUtils.count('tasks')
-    print cnt
+    #cnt=mongoUtils.count('tasks')
+    #print cnt
+    mongoUtils.update(collection_name='res_demo',filter_dict={},update_dict=update_dict)
+    '''
+    insert_data=[{'uptime': '2018-01-25 17:38:33.522000', 'uptimestamp': 1516873113997000.0}]
+
+    mongoUtils = MongoUtils()
+    mongoUtils.insert(collection_name='res_demo',insert_data=insert_data)
+

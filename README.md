@@ -1,13 +1,21 @@
+# 目标网站分析（分类信息、列表信息、详情信息、分页信息）
+- [parser] [request] [result] 三要素
+
+# install
+Anaconda3(python3)
+pip install pymongo
+
 # TODO
-- 为task添加task_code任务代号，代表一次任务
-- 为mongodb插入、更新时自动添加uptime和uptimestamp
-- 使用mongodb的findAndModify()操作tasks集合，保证原子性，参考http://runfriends.iteye.com/blog/1830749
-- 使用多进程池代替多线程做任务调度，参考https://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/0013868323401155ceb3db1e2044f80b974b469eb06cb43000
 - 封装LogUtils类做日志统一输出(控制台、mongodb)
-- 合适的容错机制
+- 合适的try...catch容错机制
+- https请求
+- 获取随机代理
+- 获取随机ua
 
 # xpath经验集
-
+- chrome的F12神器测试xpath命令：$x('xpath路径规则')
 
 
 # regexp经验集
+
+

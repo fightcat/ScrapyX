@@ -37,7 +37,7 @@ class HttpUtils:
         return r.text
 
     @staticmethod
-    def get_json(url, params=None, headers=None, cookies=None, proxies=None):
+    def get_json(url, params=None, headers=None, cookies=None, proxies=None, charset='UTF-8'):
         '''
         发送http get请求
         :param url:str 请求的url
@@ -48,6 +48,7 @@ class HttpUtils:
         :return: json 返回的json对象
         '''
         r = requests.get(url, params=params, headers=headers, cookies=cookies, proxies=proxies)
+        r.encoding = charset
         return r.json()
 
     @staticmethod
@@ -63,7 +64,7 @@ class HttpUtils:
         return
 
     @staticmethod
-    def post_html(url, data=None, headers=None, cookies=None, proxies=None):
+    def post_html(url, data=None, headers=None, cookies=None, proxies=None, charset='UTF-8'):
         '''
         发送http post请求
         :param url:str 请求的url
@@ -72,22 +73,35 @@ class HttpUtils:
         :return: str 返回的str文本
         '''
         r = requests.post(url, data=data, headers=headers, cookies=cookies, proxies=proxies)
+        r.encoding = charset
         return r.text
 
     @staticmethod
-    def gets():
+    def gets_html(url, params=None, headers=None, cookies=None, proxies=None, charset='UTF-8'):
         '''
         发送https get请求
-        :return:
+        :param url:str 请求的url
+        :param params:dict 参数
+        :param headers:dict 自定义请求头
+        :param cookies:dict 网站cookies
+        :param proxies:dict 代理
+        :return: str 返回的str文本
         '''
-        pass
+        r = requests.get(url, params=params, headers=headers, cookies=cookies, proxies=proxies, verify=False)
+        r.encoding = charset
+        return r.text
 
     @staticmethod
-    def posts():
+    def posts_html(url, data=None, headers=None, cookies=None, proxies=None, charset='UTF-8'):
         '''
         发送https post请求
-        :return:
+        :param url:str 请求的url
+        :param data:dict post的数据
+        :param headers:dict 自定义请求头
+        :return: str 返回的str文本
         '''
-        pass
+        r = requests.post(url, data=data, headers=headers, cookies=cookies, proxies=proxies, verify=False)
+        r.encoding = charset
+        return r.text
 
 

@@ -9,8 +9,6 @@ from utils.MongoUtils import MongoUtils
 
 class Pipeline:
     def __init__(self,task):
-        reload(sys)
-        sys.setdefaultencoding('utf-8');
         self.task = task
         self.taskUtils = TaskUtils()
         self.mongoUtils = MongoUtils()
@@ -21,7 +19,7 @@ class Pipeline:
         分发
         :return: 无
         '''
-        print 'Parser.run()'
+        print ('Parser.run()')
         if self.task['parser'] == 'demo':
             self.save_info('demo_info')
         else:

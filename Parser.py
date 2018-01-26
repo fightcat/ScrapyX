@@ -3,7 +3,6 @@
 Html解析器
 '''
 import sys
-import BeautifulSoup
 from lxml import etree
 from utils.TaskUtils import TaskUtils
 from Pipeline import Pipeline
@@ -13,8 +12,6 @@ import json
 class Parser:
 
     def __init__(self,task):
-        reload(sys)
-        sys.setdefaultencoding('utf-8');
         self.task = task
         self.taskUtils = TaskUtils()
 
@@ -23,7 +20,7 @@ class Parser:
         分发
         :return:
         '''
-        print 'Parser.run()'
+        print ('Parser.run()')
         if self.task['parser'] in ['demo']:
             self.parse_demo()
         else:

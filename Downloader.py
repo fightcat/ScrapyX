@@ -8,7 +8,7 @@ import threading
 from utils.HttpUtils import HttpUtils
 from Parser import Parser
 
-class Downloader(threading.Thread):
+class Downloader():
 
     def __init__(self,task):
         threading.Thread.__init__(self)
@@ -19,7 +19,7 @@ class Downloader(threading.Thread):
         线程执行，默认调用方法，任务分发
         :return:
         '''
-        print 'Downloader.run()'
+        print ('Downloader.run()')
         if self.task['parser'] in ['demo']:
             self.get_default_html()
         else:
@@ -37,7 +37,7 @@ class Downloader(threading.Thread):
         }
         r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies)
         self.task['response'] = r
-        print self.task
+        print (self.task)
 
 if __name__ == '__main__':
     task={

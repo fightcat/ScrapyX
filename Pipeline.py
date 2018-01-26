@@ -4,6 +4,8 @@
 （不负责压next task）
 '''
 import sys
+
+from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
 from utils.MongoUtils import MongoUtils
 
@@ -19,7 +21,7 @@ class Pipeline:
         分发
         :return: 无
         '''
-        print ('Parser.run()')
+        log.i ('Pipeline.run()')
         if self.task['parser'] == 'demo':
             self.save_info('demo_info')
         else:

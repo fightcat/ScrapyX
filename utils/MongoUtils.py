@@ -9,15 +9,19 @@ import configs.Settings as Settings
 import time
 import datetime
 import traceback
+from utils.LogUtils import log
 
 class MongoUtils():
 
-    def __init__(self, host=None, port=None, db_name=None):
+    def __init__(self, host=None, port=None, db_name=None, mechanism=None, user=None, password=None):
         """
         初始化对象，链接数据库
         :param host: mongo数据库所在服务器地址
         :param port: mongo数据库端口
         :param db_name: 数据库的名称
+        :param mechanism: 认证类型，None：无认证，MONGODB-CR：2.x认证，SCRAM-SHA-1：3.x认证
+        :param user：用户名
+        :param password：密码
         :return: 无返回值
         """
         if host is None:
@@ -26,13 +30,21 @@ class MongoUtils():
             port = Settings.MONGO_PORT
         if db_name is None:
             db_name = Settings.MONGO_DB
+        if mechanism is None:
+            mechanism = Settings.MONGO_MECHANISM
+        if user is None:
+            user=Settings.MONGO_USER
+        if password is None:
+            password=Settings.MONGO_PASSWORD
         try:
             self.client = None
             self.client = MongoClient(host, int(port))
             self.database = self.client.get_database(db_name)
+            if mechanism is not None:
+                self.database.authenticate(user,password,mechanism=mechanism)
         except Exception as e:
             self.close_conn()
-            print('init mongo bar failed: %s' % e)
+            log.e('init mongo bar failed: %s' % e)
 
     def count(self, collection_name, filter_dict=None):
         """
@@ -48,11 +60,11 @@ class MongoUtils():
             tab_size = collection.find(filter_dict).count()
             return tab_size
         except Exception as e:
-            print('get table size failed: %s' % e)
+            log.e('get table size failed: %s' % e)
         finally:
             return tab_size
 
-    def update(self, collection_name, filter_dict, update_dict, insert=False, multi=False):
+    def update(self, collection_name, filter_dict, update_dict, insert=False, multi=False, auto_uptime=True):
         """
         更新表记录，默认返回false
         :param collection_name: str 集合名
@@ -64,25 +76,26 @@ class MongoUtils():
         """
         result = False
         try:
-            timestamp = time.time()
-            uptimestamp = int(round(timestamp * 1000))
-            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-            if '$set' in update_dict:
-                update_dict['$set']['uptime']=uptime
-                update_dict['$set']['uptimestamp'] = uptimestamp
-            else:
-                update_dict['$set']={'uptime':uptime,'uptimestamp':uptimestamp}
+            if auto_uptime:
+                timestamp = time.time()
+                uptimestamp = int(round(timestamp * 1000))
+                uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                if '$set' in update_dict:
+                    update_dict['$set']['uptime']=uptime
+                    update_dict['$set']['uptimestamp'] = uptimestamp
+                else:
+                    update_dict['$set']={'uptime':uptime,'uptimestamp':uptimestamp}
             collection = self.database.get_collection(collection_name)
             collection.update(filter_dict, update_dict, insert, multi)
             result = True
-            print("[INFO] update success!")
+            log.d("update success!")
         except Exception as e:
-            print('update failed: %s' % e)
+            log.e('update failed: %s' % e)
             traceback.print_exc()
         finally:
             return result
 
-    def insert(self, collection_name, insert_data):
+    def insert(self, collection_name, insert_data,auto_uptime=True):
         """
         更新表记录，默认返回false
         :param collection_name: str 集合名
@@ -91,25 +104,26 @@ class MongoUtils():
         """
         result = False
         try:
-            timestamp = time.time()
-            uptimestamp = int(round(timestamp * 1000))
-            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-            if type(insert_data)==dict:
-                insert_data['uptime'] = uptime
-                insert_data['uptimestamp'] = uptimestamp
-            elif type(insert_data)==list:
-                items=[]
-                for data in insert_data:
-                    data['uptime'] = uptime
-                    data['uptimestamp'] = uptimestamp
-                    items.append(data)
-                insert_data=items
+            if auto_uptime:
+                timestamp = time.time()
+                uptimestamp = int(round(timestamp * 1000))
+                uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                if type(insert_data)==dict:
+                    insert_data['uptime'] = uptime
+                    insert_data['uptimestamp'] = uptimestamp
+                elif type(insert_data)==list:
+                    items=[]
+                    for data in insert_data:
+                        data['uptime'] = uptime
+                        data['uptimestamp'] = uptimestamp
+                        items.append(data)
+                    insert_data=items
             collection = self.database.get_collection(collection_name)
             collection.insert(insert_data)
             result = True
-            print("insert success!")
+            log.d("insert success!")
         except Exception as e:
-            print('insert failed: %s' % e)
+            log.e('insert failed: %s' % e)
         finally:
             return result
 
@@ -125,13 +139,13 @@ class MongoUtils():
             collection = self.database.get_collection(collection_name)
             collection.remove(filter_dict)
             result = True
-            print("remove success!")
+            log.d("remove success!")
         except Exception as e:
-            print('remove failed: %s' % e)
+            log.e('remove failed: %s' % e)
         finally:
             return result
 
-    def replace(self,collection_name, filter_dict, replace_data):
+    def replace(self,collection_name, filter_dict, replace_data,auto_uptime=True):
         """
         替换文档，默认返回false
         :param collection_name: str 集合名
@@ -141,17 +155,18 @@ class MongoUtils():
         """
         result = False
         try:
-            timestamp = time.time()
-            uptimestamp = int(round(timestamp * 1000))
-            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-            replace_data['uptime'] = uptime
-            replace_data['uptimestamp'] = uptimestamp
+            if auto_uptime:
+                timestamp = time.time()
+                uptimestamp = int(round(timestamp * 1000))
+                uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                replace_data['uptime'] = uptime
+                replace_data['uptimestamp'] = uptimestamp
             collection = self.database.get_collection(collection_name)
             collection.replace_one(filter_dict,replace_data)
             result = True
-            print("remove success!")
+            log.d("remove success!")
         except Exception as e:
-            print('remove failed: %s' % e)
+            log.e('remove failed: %s' % e)
         finally:
             return result
 
@@ -169,7 +184,7 @@ class MongoUtils():
             collection = self.database.get_collection(collection_name)
             result = collection.find_one(filter_dict, projection_dict)
         except Exception as e:
-            print('find data failed: %s' % e)
+            log.e('find data failed: %s' % e)
         finally:
             return result
 
@@ -197,11 +212,11 @@ class MongoUtils():
                 else:
                     result = collection.find(filter_dict, projection_dict).skip(skip_index).limit(limit_size)
         except Exception as e:
-            print('find data failed: %s' % e)
+            log.e('find data failed: %s' % e)
         finally:
             return result
 
-    def find_and_update(self, collection_name, filter_dict, update_dict, insert=False, multi=False):
+    def find_and_update(self, collection_name, filter_dict, update_dict, insert=False, multi=False,auto_uptime=True):
         """
         查找并更新表记录，默认返回false，保证原子性
         :param collection_name: str 集合名
@@ -213,27 +228,26 @@ class MongoUtils():
         """
         result = None
         try:
-            timestamp = time.time()
-            uptimestamp = int(round(timestamp * 1000))
-            uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-            if '$set' in update_dict:
-                update_dict['$set']['uptime'] = uptime
-                update_dict['$set']['uptimestamp'] = uptimestamp
-            else:
-                update_dict['$set'] = {'uptime': uptime, 'uptimestamp': uptimestamp}
+            if auto_uptime:
+                timestamp = time.time()
+                uptimestamp = int(round(timestamp * 1000))
+                uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                if '$set' in update_dict:
+                    update_dict['$set']['uptime'] = uptime
+                    update_dict['$set']['uptimestamp'] = uptimestamp
+                else:
+                    update_dict['$set'] = {'uptime': uptime, 'uptimestamp': uptimestamp}
             collection = self.database.get_collection(collection_name)
             document=collection.find_and_modify(filter_dict, update_dict, insert, multi)
             result = document
             if result is None:
-                print("[INFO] find and update nothing!")
+                log.i("[INFO] find and update nothing!")
             else:
-                print("[INFO] find and update success!")
+                log.d("[INFO] find and update success!")
         except Exception as e:
-            print('find and update failed: %s' % e)
+            log.e('find and update failed: %s' % e)
         finally:
             return result
-
-
 
     def clear_all(self,db_name):
         '''
@@ -249,7 +263,7 @@ class MongoUtils():
         """
         if self.client:
             self.client.close()
-            print ('closed mongo connection')
+            log.d('closed mongo connection')
 
 if __name__ == '__main__':
     '''

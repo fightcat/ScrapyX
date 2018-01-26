@@ -4,6 +4,8 @@ Html解析器
 '''
 import sys
 from lxml import etree
+
+from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
 from Pipeline import Pipeline
 import re
@@ -20,7 +22,7 @@ class Parser:
         分发
         :return:
         '''
-        print ('Parser.run()')
+        log.i ('Parser.run()')
         if self.task['parser'] in ['demo']:
             self.parse_demo()
         else:
@@ -42,7 +44,7 @@ class Parser:
             #解析学段
             item={}
             item['_id'] = node.get('href')
-            item['name'] = node.text.encode('utf-8')
+            item['name'] = node.text
             items.append(item)
             #解析下一任务,并插入任务队列
             parent = {

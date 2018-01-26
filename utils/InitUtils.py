@@ -2,6 +2,7 @@
 """
 初始化，清空所有数据，重新开始新一轮任务
 """
+from utils.LogUtils import log
 from utils.MongoUtils import MongoUtils
 import os
 import configs.Settings as Settings

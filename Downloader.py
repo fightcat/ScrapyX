@@ -1,15 +1,17 @@
 # coding:utf-8
-'''
-访问http
-1.获取response
-2.下载文件
-'''
+
 import threading
 from utils.HttpUtils import HttpUtils
 from Parser import Parser
+from utils.LogUtils import log
+
 
 class Downloader():
-
+    '''
+    下载器，访问http/ftp/ssh等
+    1.获取response
+    2.下载文件
+    '''
     def __init__(self,task):
         threading.Thread.__init__(self)
         self.task=task
@@ -19,7 +21,7 @@ class Downloader():
         线程执行，默认调用方法，任务分发
         :return:
         '''
-        print ('Downloader.run()')
+        log.i ('Downloader.run()')
         if self.task['parser'] in ['demo']:
             self.get_default_html()
         else:
@@ -29,15 +31,15 @@ class Downloader():
 
     def get_default_html(self):
         proxies = {
-            "http": "http://127.0.0.1:8888"
+            "http": "http://"+HttpUtils.get_proxy()
         }
-        proxies = None
+        proxies = None  #不使用代理服务器
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36"
+            "User-Agent": HttpUtils.get_useragent()
         }
         r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies)
         self.task['response'] = r
-        print (self.task)
+        #log.d(self.task)
 
 if __name__ == '__main__':
     task={

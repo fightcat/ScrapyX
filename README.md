@@ -3,9 +3,9 @@
 - [parser] [request] [result] 三要素
 
 # install
-Anaconda3(python3)
-Mongodb3
-pip install pymongo
+- Anaconda3(python3.6.3)
+- Mongodb3
+- pip install pymongo
 
 # xpath经验集
 - chrome的F12神器测试xpath命令：$x('xpath路径规则')

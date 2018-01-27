@@ -3,14 +3,12 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
-import sys
 from lxml import etree
 
+from modules.Pipeline import Pipeline
 from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
-from Pipeline import Pipeline
-import re
-import json
+
 
 class Parser:
     '''

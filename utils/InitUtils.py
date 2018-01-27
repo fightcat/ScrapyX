@@ -4,10 +4,8 @@
 @mail: 805349916@qq.com
 '''
 
-
-from utils.LogUtils import log
 from utils.MongoUtils import MongoUtils
-import os
+#import sys
 import configs.Settings as Settings
 
 class InitUtils:
@@ -28,7 +26,8 @@ class InitUtils:
 if __name__ == '__main__':
     input = input('clear all data, really? (y/n):')
     if input.lower()=='y':
-        initUtils=InitUtils()
-        initUtils.init()
+        #initUtils=InitUtils()
+        #initUtils.init()
+        print('all data clear finished')
     else:
         print('Noting be clear, bye!')

@@ -3,15 +3,15 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
+import random
 import time
+from multiprocessing import Pool
 
+from modules.Downloader import Downloader
+from utils.ConfigUtils import ConfigUtils
 from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
-from Downloader import Downloader
-import os
-from utils.ConfigUtils import ConfigUtils
-import random
-from multiprocessing import Pool
+
 
 class Scheduler:
     '''

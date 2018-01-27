@@ -4,8 +4,10 @@
 @mail: 805349916@qq.com
 '''
 import threading
+
+from modules.Parser import Parser
 from utils.HttpUtils import HttpUtils
-from Parser import Parser
+from utils.InitUtils import InitUtils
 from utils.LogUtils import log
 
 
@@ -40,12 +42,14 @@ class Downloader():
         headers = {
             "User-Agent": HttpUtils.get_useragent()
         }
-        cookie = None #不使用cookie
-        r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies, cookie=cookie)
+        cookies = None #不使用cookie
+        r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
         self.task['response'] = r
         #log.d(self.task)
 
 if __name__ == '__main__':
+    initUtils=InitUtils()
+    initUtils.init()
     task={
         "_id":"1",
         "state": "doing",

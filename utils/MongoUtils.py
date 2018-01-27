@@ -40,11 +40,13 @@ class MongoUtils():
         if password is None:
             password=Settings.MONGO_PASSWORD
         try:
+            log.d('start connect mongo')
             self.client = None
             self.client = MongoClient(host, int(port))
             self.database = self.client.get_database(db_name)
             if mechanism is not None:
                 self.database.authenticate(user,password,mechanism=mechanism)
+            log.d('mongo connect success')
         except Exception as e:
             self.close_conn()
             log.e('init mongo bar failed: %s' % e)
@@ -267,6 +269,13 @@ class MongoUtils():
         if self.client:
             self.client.close()
             log.d('closed mongo connection')
+
+    def __del__(self):
+        '''
+        析构方法
+        :return: 无
+        '''
+        self.close_conn()
 
 if __name__ == '__main__':
     '''

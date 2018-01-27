@@ -1,18 +1,23 @@
 # 通用资源爬虫框架
 - 爬取垂直类网站资源框架
 - 作者：tieqiang Xu
+- mail: 805349916@qq.com
 - 创建时间:2018.01.26
 - 欢迎fork，请给star，O(∩_∩)O~
 
 # TODO Plan
 - 将25分钟前state=doing的task，置为ready状态（25分钟非固定，可配置时间）
 - 1小时没有新任务，则认为所有task执行完成（1小时非固定，可配置时间）
-- 支持PhantomJS浏览器
+- 支持PhantomJS浏览器解析js
+- pipline将最终完成的task更新到mongodb中
+- mongo连接失败友好提示给用户
+- 运行InitUtils不能自动结束进程（LogUtils中的线程队列死循环导致）
 
 # 安装运行环境
 - Anaconda3(python3.6.3)
 - Mongodb3数据
 - pip install pymongo
+- 不需要初始化mongodb库，首次运行项目时会自动检测并初始化数据库
 
 # 主要特性
 - 业务流程：Main入口 -> Scheduler任务调度器模块 -> Downloader下载器模块 -> Parser页面解析器模块 -> Pipelline资源存储管道模块
@@ -26,6 +31,11 @@
 |[configs] |配置集|
 |....configs.ini |运行时可变的配置 |
 |....Settings.py |运行时不可变的配置 |
+|[modules] |模块集 |
+|....Scheduler.py |任务调度器模块 |
+|....Downloader.py |下载器模块 |
+|....Parser.py |页面解析器模块 |
+|....Pipeline.py |资源存储管道模块 |
 |[utils] |工具集 |
 |....ConfigUtils.py |读写configs/configs.ini的工具类 |
 |....HttpUtils.py |访问http/https的工具类 |
@@ -33,16 +43,13 @@
 |....LogUtils.py |日志处理工具类 |
 |....MongoUtils.py |Mongo连接和增删改查工具类 |
 |....TaskUtils.py |Task任务操作工具类 |
-|Main.py |项目入口 |
-|Scheduler.py |任务调度器模块 |
-|Downloader.py |下载器模块 |
-|Parser.py |页面解析器模块 |
-|Pipeline.py |资源存储管道模块 |
+|Main.py |项目入口（从这里开始运行/调试） |
+|README.md |安装、使用、开发详细说明 |
 
 - 更详细的说明见源码内注释
 
-# 数据结构(Mongodb)
-#### 1. tasks
+# 数据结构(MongoDB)
+#### 1. tasks集合
 ```
 [{
     "_id" : ObjectId("5a6af4a957215754f04e66d4"),
@@ -80,14 +87,14 @@
 |[uptime] |string |更新时间（插入时自动构建，用于历史追溯） |
 |[uptimestamp] |number |更新时间戳（插入时自动构建，用于历史追溯筛选条件、排序） |
 
-- 注1：第1个task在Scheduler模块调用TaskUtils构建方法时创建（根据Settings.py的配置）；之后的task由Parser模块创建
-- 注2：task从Scheduler模块中读取，在Scheduler模块、Downloader模块、Parser模块、Pipeline模块中按顺序传递，每个模块都把自己执行的结果写入task，以供下一个模块使用
+- 注1：第1个task在Scheduler模块调用TaskUtils的构造方法时创建（根据Settings.py的配置），之后的task由Parser模块创建；
+- 注2：task从Scheduler模块中读取，在Scheduler模块、Downloader模块、Parser模块、Pipeline模块中按顺序传递，每个模块都把自己执行的结果写入task，以供下一个模块使用；
 - 注3：Scheduler模块负责写入第1个task、读取ready的task，并将取出的task的state置为doing状态；
 - 注4：Downloader模块负责读取task的paser和request，并将结果写入response；
 - 注5：Parser模块负责读取task的paser和response，并将结果写入result，同时也应该生成下一次task的paser和request,将下一次任务写入mongodb；
-- 注6：Pipline模块负责读取task的paser和result，并将结果写入mongodb，同时将本次task的state置为done状态
+- 注6：Pipline模块负责读取task的paser和result，并将结果写入mongodb，同时将本次task的state置为done状态；
 
-#### 2. logs
+#### 2. logs集合
 ```
 {
     "_id" : ObjectId("5a6af48157215754ec49e02e"),
@@ -135,6 +142,7 @@
 - 访问http/https时需要特殊proxy、user-agent、cookie时，请修改HttpUtils中的get_proxy()、get_useragent()、get_cookie()及Downloader中的代码
 - 控制台输出日志时尽量不要使用系统内置的print()，请使用LogUtils.log的d()、i()、w()、e()，它提供了更详尽的输出信息，并且日志也会被记录到mongodb的logs集合中，便于追溯
 - 执行过程中如果中途断掉，会产生state=doing的task，请在task全部执行完毕后将它们置为ready状态
+- 调试过程中需要经常初始化数据库，运行utils/InitUtils可以快速初始化，或者直接调用InitUtils的init()方法
 
 # xpath经验集
 - chrome的F12神器测试xpath命令：$x('xpath路径规则')

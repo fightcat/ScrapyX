@@ -5,7 +5,8 @@
 @mail: 805349916@qq.com
 '''
 import sys
-from Scheduler import Scheduler
+
+from modules.Scheduler import Scheduler
 
 def main():
     #执行任务计划

@@ -1,10 +1,7 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 '''
-读取ini配置文件
-ini文件结构如下：
-[Section1]
-option1 : value1
-option2 : value2
+@author: tieqiang Xu
+@mail: 805349916@qq.com
 '''
 import configparser
 import os
@@ -14,6 +11,14 @@ conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','confi
 config.read(conf_file,encoding='UTF-8')
 
 class ConfigUtils(object):
+    '''
+    读取ini配置文件
+        ini文件结构如下：
+        [Section1]
+        option1 : value1
+        option2 : value2
+    '''
+
     def __init__(self):
         pass
 

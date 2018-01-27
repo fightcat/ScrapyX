@@ -1,7 +1,8 @@
-# coding:utf-8
-"""
-mongo操作工具
-"""
+# -*- coding: utf-8 -*-
+'''
+@author: tieqiang Xu
+@mail: 805349916@qq.com
+'''
 
 import os
 from pymongo import MongoClient
@@ -12,7 +13,9 @@ import traceback
 from utils.LogUtils import log
 
 class MongoUtils():
-
+    '''
+    mongo操作工具
+    '''
     def __init__(self, host=None, port=None, db_name=None, mechanism=None, user=None, password=None):
         """
         初始化对象，链接数据库

@@ -1,13 +1,19 @@
-# coding:utf-8
-"""
-初始化，清空所有数据，重新开始新一轮任务
-"""
+# -*- coding: utf-8 -*-
+'''
+@author: tieqiang Xu
+@mail: 805349916@qq.com
+'''
+
+
 from utils.LogUtils import log
 from utils.MongoUtils import MongoUtils
 import os
 import configs.Settings as Settings
 
 class InitUtils:
+    '''
+    初始化，清空所有数据，重新开始新一轮任务
+    '''
     def __init__(self):
         self.mongoUtils = MongoUtils()
         pass

@@ -1,5 +1,8 @@
-# coding:utf-8
-
+# -*- coding: utf-8 -*-
+'''
+@author: tieqiang Xu
+@mail: 805349916@qq.com
+'''
 import threading
 from utils.HttpUtils import HttpUtils
 from Parser import Parser
@@ -37,7 +40,8 @@ class Downloader():
         headers = {
             "User-Agent": HttpUtils.get_useragent()
         }
-        r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies)
+        cookie = None #不使用cookie
+        r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies, cookie=cookie)
         self.task['response'] = r
         #log.d(self.task)
 

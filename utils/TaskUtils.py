@@ -1,23 +1,26 @@
-# coding:utf-8
-"""
-Task操作工具
-tasks
-{
-    "parser": "phase"
-    "request": "http://so.eduyun.cn/synResource",
-    "response": "<html>...</html>"
-    "parent": {},
-    "state": "done",
-    "uptime":
-}
-"""
+# -*- coding: utf-8 -*-
+'''
+@author: tieqiang Xu
+@mail: 805349916@qq.com
+'''
 
 from utils.MongoUtils import MongoUtils
 import os
 import configs.Settings as Settings
 
 class TaskUtils:
-
+    '''
+    Task操作工具
+    tasks
+    {
+        "parser": "phase"
+        "request": "http://so.eduyun.cn/synResource",
+        "response": "<html>...</html>"
+        "parent": {},
+        "state": "done",
+        "uptime":
+    }
+    '''
     def __init__(self):
         self.mongoUtils = None
         self.mongoUtils = MongoUtils()

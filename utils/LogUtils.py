@@ -1,4 +1,8 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+'''
+@author: tieqiang Xu
+@mail: 805349916@qq.com
+'''
 
 import time
 import datetime

@@ -1,6 +1,8 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 '''
 爬虫入口
+@author: tieqiang Xu
+@mail: 805349916@qq.com
 '''
 import sys
 from Scheduler import Scheduler

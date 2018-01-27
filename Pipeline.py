@@ -1,8 +1,9 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 '''
-存储结果管道
-（不负责压next task）
+@author: tieqiang Xu
+@mail: 805349916@qq.com
 '''
+
 import sys
 
 from utils.LogUtils import log
@@ -10,6 +11,10 @@ from utils.TaskUtils import TaskUtils
 from utils.MongoUtils import MongoUtils
 
 class Pipeline:
+    '''
+    存储结果管道
+    （不负责压next task）
+    '''
     def __init__(self,task):
         self.task = task
         self.taskUtils = TaskUtils()

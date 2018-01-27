@@ -1,6 +1,7 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 '''
-Html解析器
+@author: tieqiang Xu
+@mail: 805349916@qq.com
 '''
 import sys
 from lxml import etree
@@ -12,7 +13,9 @@ import re
 import json
 
 class Parser:
-
+    '''
+    Html解析器
+    '''
     def __init__(self,task):
         self.task = task
         self.taskUtils = TaskUtils()

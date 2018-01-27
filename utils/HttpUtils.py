@@ -1,16 +1,18 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 '''
-访问http
-1.获取response
-2.下载文件
+@author: tieqiang Xu
+@mail: 805349916@qq.com
 '''
 import requests
 
 from utils.LogUtils import log
 
-
 class HttpUtils:
-
+    '''
+    访问http/https
+    1.获取response
+    2.下载文件
+    '''
     def __init__(self):
         pass
 
@@ -171,6 +173,14 @@ class HttpUtils:
         :return: string
         '''
         return '127.0.0.1:8888'
+
+    @staticmethod
+    def get_cookie():
+        '''
+        获取cookie
+        :return:
+        '''
+        return ''
 
 if __name__ == '__main__':
     r=HttpUtils.get_html(url="http://www.736372726382863.com")

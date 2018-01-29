@@ -5,7 +5,7 @@
 '''
 import requests
 
-from utils.LogUtils import log
+from utils.LogUtil import Log
 
 class HttpUtil:
     '''
@@ -28,7 +28,7 @@ class HttpUtil:
             r = requests.get(url)
             html=r.headers
         except Exception as e:
-            log.e("http get header failed -> " + str(e))
+            Log.e("http get header failed -> " + str(e))
         finally:
             pass
         return html
@@ -50,7 +50,7 @@ class HttpUtil:
             r.encoding = charset
             html=r.text
         except Exception as e:
-            log.e("http get html failed -> " + str(e))
+            Log.e("http get html failed -> " + str(e))
         finally:
             pass
         return html
@@ -72,7 +72,7 @@ class HttpUtil:
             r.encoding = charset
             html = r.json()
         except Exception as e:
-            log.e("http get json failed -> " + str(e))
+            Log.e("http get json failed -> " + str(e))
         finally:
             pass
         return html
@@ -90,7 +90,7 @@ class HttpUtil:
                 for chunk in r.iter_content(512):
                     fd.write(chunk)
         except Exception as e:
-            log.e("http get file failed -> " + str(e))
+            Log.e("http get file failed -> " + str(e))
             html=False
         finally:
             pass
@@ -111,7 +111,7 @@ class HttpUtil:
             r.encoding = charset
             html = r.text
         except Exception as e:
-            log.e("http post html failed -> " + str(e))
+            Log.e("http post html failed -> " + str(e))
         finally:
             pass
         return html
@@ -133,7 +133,7 @@ class HttpUtil:
             r.encoding = charset
             html = r.text
         except Exception as e:
-            log.e("https get html failed -> " + str(e))
+            Log.e("https get html failed -> " + str(e))
         finally:
             pass
         return html
@@ -153,7 +153,7 @@ class HttpUtil:
             r.encoding = charset
             html=r.text
         except Exception as e:
-            log.e("https post html failed -> " + str(e))
+            Log.e("https post html failed -> " + str(e))
         finally:
             pass
         return html

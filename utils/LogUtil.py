@@ -11,8 +11,8 @@ import sys
 import threading
 from queue import Queue
 from pymongo import MongoClient
-from configs import Settings
-from utils.ConfigUtils import ConfigUtils
+from configs import Setting
+from utils.ConfigUtil import ConfigUtil
 
 
 class Log():
@@ -84,7 +84,7 @@ class Log():
         log_timestring = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         pid=os.getpid()
         #将log写入console
-        config_level = ConfigUtils.get('log', 'level')
+        config_level = ConfigUtil.get('log', 'level')
         enum_level=['DEBUG', 'INFO', 'WARN', 'ERROR']
         level_index=enum_level.index(level) if level in enum_level else -1
         config_level_index=enum_level.index(config_level) if config_level in enum_level else -1
@@ -130,12 +130,12 @@ class _MongoLog(threading.Thread):
         :param insert_data: 日志数据
         :return: 无
         '''
-        host=Settings.MONGO_HOST
-        port = Settings.MONGO_PORT
-        db_name = Settings.MONGO_DB
-        mechanism = Settings.MONGO_MECHANISM
-        user=Settings.MONGO_USER
-        password=Settings.MONGO_PASSWORD
+        host=Setting.MONGO_HOST
+        port = Setting.MONGO_PORT
+        db_name = Setting.MONGO_DB
+        mechanism = Setting.MONGO_MECHANISM
+        user=Setting.MONGO_USER
+        password=Setting.MONGO_PASSWORD
         client = None
         try:
             client = MongoClient(host, int(port))

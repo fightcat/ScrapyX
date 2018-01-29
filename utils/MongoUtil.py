@@ -6,11 +6,11 @@
 
 import os
 from pymongo import MongoClient
-import configs.Settings as Settings
+import configs.Setting as Setting
 import time
 import datetime
 import traceback
-from utils.LogUtils import log
+from utils.LogUtil import Log
 
 class MongoUtil():
     '''
@@ -28,28 +28,28 @@ class MongoUtil():
         :return: 无返回值
         """
         if host is None:
-            host=Settings.MONGO_HOST
+            host=Setting.MONGO_HOST
         if port is None:
-            port = Settings.MONGO_PORT
+            port = Setting.MONGO_PORT
         if db_name is None:
-            db_name = Settings.MONGO_DB
+            db_name = Setting.MONGO_DB
         if mechanism is None:
-            mechanism = Settings.MONGO_MECHANISM
+            mechanism = Setting.MONGO_MECHANISM
         if user is None:
-            user=Settings.MONGO_USER
+            user=Setting.MONGO_USER
         if password is None:
-            password=Settings.MONGO_PASSWORD
+            password=Setting.MONGO_PASSWORD
         try:
-            log.d('start connect mongo')
+            Log.d('start connect mongo')
             self.client = None
             self.client = MongoClient(host, int(port))
             self.database = self.client.get_database(db_name)
             if mechanism is not None:
                 self.database.authenticate(user,password,mechanism=mechanism)
-            log.d('mongo connect success')
+            Log.d('mongo connect success')
         except Exception as e:
             self.close_conn()
-            log.e('init mongo bar failed: %s' % e)
+            Log.e('init mongo bar failed: %s' % e)
 
     def count(self, collection_name, filter_dict=None):
         """
@@ -65,7 +65,7 @@ class MongoUtil():
             tab_size = collection.find(filter_dict).count()
             return tab_size
         except Exception as e:
-            log.e('get table size failed: %s' % e)
+            Log.e('get table size failed: %s' % e)
         finally:
             return tab_size
 
@@ -93,9 +93,9 @@ class MongoUtil():
             collection = self.database.get_collection(collection_name)
             collection.update(filter_dict, update_dict, insert, multi)
             result = True
-            log.d("update success!")
+            Log.d("update success!")
         except Exception as e:
-            log.e('update failed: %s' % e)
+            Log.e('update failed: %s' % e)
             traceback.print_exc()
         finally:
             return result
@@ -126,9 +126,9 @@ class MongoUtil():
             collection = self.database.get_collection(collection_name)
             collection.insert(insert_data)
             result = True
-            log.d("insert success!")
+            Log.d("insert success!")
         except Exception as e:
-            log.e('insert failed: %s' % e)
+            Log.e('insert failed: %s' % e)
         finally:
             return result
 
@@ -144,9 +144,9 @@ class MongoUtil():
             collection = self.database.get_collection(collection_name)
             collection.remove(filter_dict)
             result = True
-            log.d("remove success!")
+            Log.d("remove success!")
         except Exception as e:
-            log.e('remove failed: %s' % e)
+            Log.e('remove failed: %s' % e)
         finally:
             return result
 
@@ -169,9 +169,9 @@ class MongoUtil():
             collection = self.database.get_collection(collection_name)
             collection.replace_one(filter_dict,replace_data)
             result = True
-            log.d("remove success!")
+            Log.d("remove success!")
         except Exception as e:
-            log.e('remove failed: %s' % e)
+            Log.e('remove failed: %s' % e)
         finally:
             return result
 
@@ -189,7 +189,7 @@ class MongoUtil():
             collection = self.database.get_collection(collection_name)
             result = collection.find_one(filter_dict, projection_dict)
         except Exception as e:
-            log.e('find data failed: %s' % e)
+            Log.e('find data failed: %s' % e)
         finally:
             return result
 
@@ -217,7 +217,7 @@ class MongoUtil():
                 else:
                     result = collection.find(filter_dict, projection_dict).skip(skip_index).limit(limit_size)
         except Exception as e:
-            log.e('find data failed: %s' % e)
+            Log.e('find data failed: %s' % e)
         finally:
             return result
 
@@ -246,11 +246,11 @@ class MongoUtil():
             document=collection.find_and_modify(filter_dict, update_dict, insert, multi)
             result = document
             if result is None:
-                log.i("[INFO] find and update nothing!")
+                Log.i("[INFO] find and update nothing!")
             else:
-                log.d("[INFO] find and update success!")
+                Log.d("[INFO] find and update success!")
         except Exception as e:
-            log.e('find and update failed: %s' % e)
+            Log.e('find and update failed: %s' % e)
         finally:
             return result
 
@@ -268,7 +268,7 @@ class MongoUtil():
         """
         if self.client:
             self.client.close()
-            log.d('closed mongo connection')
+            Log.d('closed mongo connection')
 
     def __del__(self):
         '''

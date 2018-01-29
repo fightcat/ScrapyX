@@ -4,9 +4,9 @@
 @mail: 805349916@qq.com
 '''
 
-from utils.MongoUtils import MongoUtils
+from utils.MongoUtil import MongoUtil
 import os
-import configs.Settings as Settings
+import configs.Setting as Setting
 
 class TaskUtil:
     '''
@@ -22,19 +22,18 @@ class TaskUtil:
     }
     '''
     def __init__(self):
-        self.mongoUtils = None
-        self.mongoUtils = MongoUtils()
-        count=self.mongoUtils.count(collection_name='tasks')
+        self.mongoUtil = MongoUtil()
+        count=self.mongoUtil.count(collection_name='tasks')
         if count==0:
-            first_task_parser = Settings.FIRST_TASK_PARSER
-            first_task_url = Settings.FIRST_TASK_URL
+            first_task_parser = Setting.FIRST_TASK_PARSER
+            first_task_url = Setting.FIRST_TASK_URL
             insert_data = {
                 "parser": first_task_parser,
                 "request": first_task_url,
                 "parent":{},
                 "state": "ready"
             }
-            self.mongoUtils.insert(collection_name='tasks', insert_data=insert_data)
+            self.mongoUtil.insert(collection_name='tasks', insert_data=insert_data)
 
     def get_ready(self):
         '''
@@ -59,7 +58,7 @@ class TaskUtil:
             }
         }
         # 执行mongo操作
-        task = self.mongoUtils.find_and_update(collection_name='tasks', filter_dict=filter_dict, update_dict=update_dict)
+        task = self.mongoUtil.find_and_update(collection_name='tasks', filter_dict=filter_dict, update_dict=update_dict)
         return task
 
     def set_state(self,id,state):
@@ -73,7 +72,7 @@ class TaskUtil:
         update_dict = {
             '$set':{'state':state}
         }
-        self.mongoUtils.update(collection_name='tasks', filter_dict=filter_dict, update_dict=update_dict)
+        self.mongoUtil.update(collection_name='tasks', filter_dict=filter_dict, update_dict=update_dict)
 
     def update_all(self,id,task):
         '''
@@ -95,7 +94,7 @@ class TaskUtil:
             'request': request,
             'parent': parent
         }
-        r = self.mongoUtils.find_one(collection_name='tasks', filter_dict=filter_dict)
+        r = self.mongoUtil.find_one(collection_name='tasks', filter_dict=filter_dict)
         if r is None:
             task = {
                 'parser': parser,
@@ -103,7 +102,7 @@ class TaskUtil:
                 'parent': parent,
                 'state': 'ready'
             }
-            r=self.mongoUtils.insert(collection_name='tasks', insert_data=task)
+            r=self.mongoUtil.insert(collection_name='tasks', insert_data=task)
 
     def __del__(self):
-        self.mongoUtils.close_conn()
+        self.mongoUtil.close_conn()

@@ -6,12 +6,12 @@
 '''
 import sys
 
-from modules.Scheduler import Scheduler
+from modules.SchedulerX import SchedulerX
 
 def main():
     #执行任务计划
-    scheduler = Scheduler()
-    scheduler.run()
+    schedulerX = SchedulerX()
+    schedulerX.run()
 
 if __name__ == '__main__':
     #项目入口

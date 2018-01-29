@@ -6,9 +6,9 @@
 
 import sys
 
-from utils.LogUtils import log
-from utils.TaskUtils import TaskUtils
-from utils.MongoUtils import MongoUtils
+from utils.LogUtil import Log
+from utils.TaskUtil import TaskUtil
+from utils.MongoUtil import MongoUtil
 
 class PipelineX:
     '''
@@ -17,8 +17,8 @@ class PipelineX:
     '''
     def __init__(self,task):
         self.task = task
-        self.taskUtils = TaskUtils()
-        self.mongoUtils = MongoUtils()
+        self.taskUtil = TaskUtil()
+        self.mongoUtil = MongoUtil()
         pass
 
     def run(self):
@@ -26,14 +26,14 @@ class PipelineX:
         分发
         :return: 无
         '''
-        log.i ('Pipeline.run()')
+        Log.i ('Pipeline.run()')
         if self.task['parser'] == 'demo':
             self.save_info('demo_info')
         else:
             pass
         #将本条task的状态置为done
         if '_id' in self.task.keys():
-            self.taskUtils.set_state(self.task['_id'],'done')
+            self.taskUtil.set_state(self.task['_id'],'done')
         pass
 
     def save_info(self,collection_name):
@@ -51,12 +51,12 @@ class PipelineX:
         if self.task['results'] is not None:
             for result in self.task['results']:
                 insert_data = dict(self.task['parent'], **result)
-                self.mongoUtils.insert(collection_name=collection_name,insert_data=insert_data)
+                self.mongoUtil.insert(collection_name=collection_name,insert_data=insert_data)
         pass
 
 
     def __del__(self):
-        self.mongoUtils.close_conn()
+        self.mongoUtil.close_conn()
 
 if __name__ == '__main__':
     task={
@@ -66,5 +66,5 @@ if __name__ == '__main__':
         'parent':{},
         'response':''
     }
-    pipeline = PipelineX(task)
-    pipeline.run()
+    pipelineX = PipelineX(task)
+    pipelineX.run()

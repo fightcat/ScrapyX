@@ -5,10 +5,10 @@
 '''
 import threading
 
-from modules.Parser import Parser
-from utils.HttpUtils import HttpUtils
-from utils.InitUtils import InitUtils
-from utils.LogUtils import log
+from modules.ParserX import ParserX
+from utils.HttpUtil import HttpUtil
+from utils.InitUtil import InitUtil
+from utils.LogUtil import Log
 
 
 class DownloaderX():
@@ -26,30 +26,30 @@ class DownloaderX():
         线程执行，默认调用方法，任务分发
         :return:
         '''
-        log.i ('Downloader.run()')
+        Log.i ('Downloader.run()')
         if self.task['parser'] in ['demo']:
             self.get_default_html()
         else:
             self.get_default_html()
-        parser=Parser(self.task)
-        parser.run()
+        parserX=ParserX(self.task)
+        parserX.run()
 
     def get_default_html(self):
         proxies = {
-            "http": "http://"+HttpUtils.get_proxy()
+            "http": "http://"+HttpUtil.get_proxy()
         }
         proxies = None  #不使用代理服务器
         headers = {
-            "User-Agent": HttpUtils.get_useragent()
+            "User-Agent": HttpUtil.get_useragent()
         }
         cookies = None #不使用cookie
-        r = HttpUtils.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
+        r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
         self.task['response'] = r
         #log.d(self.task)
 
 if __name__ == '__main__':
-    initUtils=InitUtils()
-    initUtils.init()
+    initUtil=InitUtil()
+    initUtil.init()
     task={
         "_id":"1",
         "state": "doing",

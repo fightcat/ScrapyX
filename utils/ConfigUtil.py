@@ -7,7 +7,7 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','configs','configs.ini')
+conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','configs','config.ini')
 config.read(conf_file,encoding='UTF-8')
 
 class ConfigUtil(object):

@@ -5,9 +5,9 @@
 '''
 from lxml import etree
 
-from modules.Pipeline import Pipeline
-from utils.LogUtils import log
-from utils.TaskUtils import TaskUtils
+from modules.PipelineX import PipelineX
+from utils.LogUtil import Log
+from utils.TaskUtil import TaskUtil
 
 
 class ParserX:
@@ -16,21 +16,21 @@ class ParserX:
     '''
     def __init__(self,task):
         self.task = task
-        self.taskUtils = TaskUtils()
+        self.taskUtil = TaskUtil()
 
     def run(self):
         '''
         分发
         :return:
         '''
-        log.i ('Parser.run()')
+        Log.i ('Parser.run()')
         if self.task['parser'] in ['demo']:
             self.parse_demo()
         else:
             pass
 
-        pipeline=Pipeline(self.task)
-        pipeline.run()
+        pipelineX=PipelineX(self.task)
+        pipelineX.run()
 
 
     def parse_demo(self):
@@ -52,7 +52,7 @@ class ParserX:
                 'parent_id':item['_id'],
                 'parent_name':item['name']
             }
-            self.taskUtils.insert_one(parser='next',request=node.get('href'),parent=parent)
+            self.taskUtil.insert_one(parser='next',request=node.get('href'),parent=parent)
         #解析结果存入task
         self.task['results']=items
 
@@ -63,5 +63,5 @@ if __name__ == '__main__':
         'request': 'http://www.baidu.com',
         'response': '<html></html>'
     }
-    parser=ParserX(task)
-    parser.run()
+    parserX=ParserX(task)
+    parserX.run()

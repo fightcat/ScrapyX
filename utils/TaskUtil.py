@@ -8,7 +8,7 @@ from utils.MongoUtils import MongoUtils
 import os
 import configs.Settings as Settings
 
-class TaskUtils:
+class TaskUtil:
     '''
     Task操作工具
     tasks

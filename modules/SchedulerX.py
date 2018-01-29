@@ -13,7 +13,7 @@ from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
 
 
-class Scheduler:
+class SchedulerX:
     '''
     调度器，
     1.从队列中取task
@@ -62,5 +62,5 @@ class Scheduler:
         log.i ('All subprocesses done.')
 
 if __name__ == '__main__':
-    scheduler=Scheduler()
+    scheduler=SchedulerX()
     scheduler.run()

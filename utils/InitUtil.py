@@ -8,7 +8,7 @@ from utils.MongoUtils import MongoUtils
 #import sys
 import configs.Settings as Settings
 
-class InitUtils:
+class InitUtil:
     '''
     初始化，清空所有数据，重新开始新一轮任务
     '''

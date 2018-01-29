@@ -7,7 +7,7 @@ import requests
 
 from utils.LogUtils import log
 
-class HttpUtils:
+class HttpUtil:
     '''
     访问http/https
     1.获取response
@@ -183,5 +183,5 @@ class HttpUtils:
         return ''
 
 if __name__ == '__main__':
-    r=HttpUtils.get_html(url="http://www.736372726382863.com")
+    r=HttpUtil.get_html(url="http://www.736372726382863.com")
     print(r)

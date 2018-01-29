@@ -10,7 +10,7 @@ from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
 from utils.MongoUtils import MongoUtils
 
-class Pipeline:
+class PipelineX:
     '''
     存储结果管道
     （不负责压next task）
@@ -66,5 +66,5 @@ if __name__ == '__main__':
         'parent':{},
         'response':''
     }
-    pipeline = Pipeline(task)
+    pipeline = PipelineX(task)
     pipeline.run()

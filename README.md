@@ -6,12 +6,20 @@
 - 欢迎fork，请给star，O(∩_∩)O~
 
 # TODO Plan
+- 编写XpathUtil工具类，获取多node、单一node、属性值、Text()值、innerHtml值，封装转&nbsp、去首尾空格功能、取夹在中间部分
+- 编写RegexpUtil工具类，获取夹在中间的部分，获取特定字符到结尾，获取从开头到特定字符，获取数字
+- task内添加next_tasks字段、table_name字段
+- Pipline将最终完成的task更新到mongodb中
+- 再度封装，将存储next_tasks的逻辑放入pipline内，简化封装后普通抓取
+- 对各模块的run进行封，运用反射机制自动分发，只需要继承Parser编写相应的函数逻辑写task结构即可
+- use_agent、proxy、cookie、header可配置
 - 将25分钟前state=doing的task，置为ready状态（25分钟非固定，可配置时间）
 - 1小时没有新任务，则认为所有task执行完成（1小时非固定，可配置时间）
-- 支持PhantomJS浏览器解析js
-- pipline将最终完成的task更新到mongodb中
+- 支持PhantomJS浏览器解析js、302跳转
 - mongo连接失败友好提示给用户
 - 运行InitUtils不能自动结束进程（LogUtils中的线程队列死循环导致）
+- 常见网站登录的插件化（微博等）
+- 验证码识别插件（深度学习）
 
 # 安装运行环境
 - Anaconda3(python3.6.3)
@@ -20,7 +28,7 @@
 - 不需要初始化mongodb库，首次运行项目时会自动检测并初始化数据库
 
 # 主要特性
-- 业务流程：Main入口 -> Scheduler任务调度器模块 -> Downloader下载器模块 -> Parser页面解析器模块 -> Pipelline资源存储管道模块
+- 业务流程：Main入口 -> SchedulerX任务调度器模块 -> DownloaderX下载器模块 -> ParserX页面解析器模块 -> PipellineX资源存储管道模块
 - 多进程访问网络、多线程日志
 - 推荐使用 lml.xpath 与 regexp 配合做网页解析（万能组合）
 - 支持断点续爬（task级）
@@ -29,20 +37,20 @@
 |文件/文件夹 |功能 |
 |--------   | :----- |
 |[configs] |配置集|
-|....configs.ini |运行时可变的配置 |
-|....Settings.py |运行时不可变的配置 |
+|....config.ini |运行时可变的配置 |
+|....Setting.py |运行时不可变的配置 |
 |[modules] |模块集 |
-|....Scheduler.py |任务调度器模块 |
-|....Downloader.py |下载器模块 |
-|....Parser.py |页面解析器模块 |
-|....Pipeline.py |资源存储管道模块 |
+|....SchedulerX.py |任务调度器模块 |
+|....DownloaderX.py |下载器模块 |
+|....ParserX.py |页面解析器模块 |
+|....PipelineX.py |资源存储管道模块 |
 |[utils] |工具集 |
-|....ConfigUtils.py |读写configs/configs.ini的工具类 |
-|....HttpUtils.py |访问http/https的工具类 |
-|....InitUtils.py |任务初始化工具类(调试用) |
-|....LogUtils.py |日志处理工具类 |
-|....MongoUtils.py |Mongo连接和增删改查工具类 |
-|....TaskUtils.py |Task任务操作工具类 |
+|....ConfigUtil.py |读写configs/config.ini的工具类 |
+|....HttpUtil.py |访问http/https的工具类 |
+|....InitUtil.py |任务初始化工具类(调试用) |
+|....LogUtil.py |日志处理工具类 |
+|....MongoUtil.py |Mongo连接和增删改查工具类 |
+|....TaskUtil.py |Task任务操作工具类 |
 |Main.py |项目入口（从这里开始运行/调试） |
 |README.md |安装、使用、开发详细说明 |
 
@@ -87,12 +95,12 @@
 |[uptime] |string |更新时间（插入时自动构建，用于历史追溯） |
 |[uptimestamp] |number |更新时间戳（插入时自动构建，用于历史追溯筛选条件、排序） |
 
-- 注1：第1个task在Scheduler模块调用TaskUtils的构造方法时创建（根据Settings.py的配置），之后的task由Parser模块创建；
-- 注2：task从Scheduler模块中读取，在Scheduler模块、Downloader模块、Parser模块、Pipeline模块中按顺序传递，每个模块都把自己执行的结果写入task，以供下一个模块使用；
-- 注3：Scheduler模块负责写入第1个task、读取ready的task，并将取出的task的state置为doing状态；
-- 注4：Downloader模块负责读取task的paser和request，并将结果写入response；
-- 注5：Parser模块负责读取task的paser和response，并将结果写入result，同时也应该生成下一次task的paser和request,将下一次任务写入mongodb；
-- 注6：Pipline模块负责读取task的paser和result，并将结果写入mongodb，同时将本次task的state置为done状态；
+- 注1：第1个task在SchedulerX模块调用TaskUtils的构造方法时创建（根据Settings.py的配置），之后的task由Parser模块创建；
+- 注2：task从SchedulerX模块中读取，在SchedulerX模块、DownloaderX模块、ParserX模块、PipelineX模块中按顺序传递，每个模块都把自己执行的结果写入task，以供下一个模块使用；
+- 注3：SchedulerX模块负责写入第1个task、读取ready的task，并将取出的task的state置为doing状态；
+- 注4：DownloaderX模块负责读取task的paser和request，并将结果写入response；
+- 注5：ParserX模块负责读取task的paser和response，并将结果写入result，同时也应该生成下一次task的paser和request,将下一次任务写入mongodb；
+- 注6：PiplineX模块负责读取task的paser和result，并将结果写入mongodb，同时将本次task的state置为done状态；
 
 #### 2. logs集合
 ```
@@ -122,30 +130,42 @@
 - 规划每种信息的[parser-解析器名称]，[request-请求url]， [result-结果格式] 三要素
 - 使用chrome的F12神器，编写、检验各种元素定位的xpath及regexp
 #### 第2步：修改初始配置configs
-- 修改configs/conifgs.ini，手动配置"任务间隔秒数"、"日志显示级别"等
-- 修改configs/Settings.py, 手动配置"Mongodb连接参数"、"初始task的解析器、url"等
+- 修改configs/conifg.ini，手动配置"任务间隔秒数"、"日志显示级别"等
+- 修改configs/Setting.py, 手动配置"Mongodb连接参数"、"初始task的解析器、url"等
 
-#### 第3步：编写Downloader代码逻辑
-- 修改Downloader.run()代码，按self.task[parser]值做分发调用本类函数
+#### 第3步：编写DownloaderX代码逻辑
+- 修改DownloaderX.run()代码，按self.task[parser]值做分发调用本类函数
 - 创建各parser对应的函数，在函数内使用HttpUtil访问self.task[request]字段值，将结果写入self.task[response]内
 
-### 第4步：编写Parser代码逻辑
-- 修改Parser.run()代码，按self.task[parser]值做分发调用本类函数
+### 第4步：编写ParserX代码逻辑
+- 修改ParserX.run()代码，按self.task[parser]值做分发调用本类函数
 - 创建各parser对应的函数，在函数内使用xpath和regexp解析self.task[response]字段值，将解析结果写入self.task[result]内;同时解析出下一次task的parser和request，写入mongodb的tasks集合中
 
-### 第5步：编写Pipline代码逻辑
-- 修改Downloader.run()代码，按self.task[parser]值做分发调用本类函数
+### 第5步：编写PiplineX代码逻辑
+- 修改DownloaderX.run()代码，按self.task[parser]值做分发调用本类函数
 - 创建各parser对应的函数，在函数内访问self.task[result]字段值写入MongoDB内
 
 ### 第6步：循环3-5步完成开发
-- 调试单个parser的下载/解析/存储时，建议从Downloader开始运行DEBUG模式，不必从Main.py开始执行，因为Scheduler内的死循环和多进程，会增加调试难度
-- 访问http/https时需要特殊proxy、user-agent、cookie时，请修改HttpUtils中的get_proxy()、get_useragent()、get_cookie()及Downloader中的代码
-- 控制台输出日志时尽量不要使用系统内置的print()，请使用LogUtils.log的d()、i()、w()、e()，它提供了更详尽的输出信息，并且日志也会被记录到mongodb的logs集合中，便于追溯
+- 调试单个parser的下载/解析/存储时，建议从DownloaderX开始运行DEBUG模式，不必从Main.py开始执行，因为SchedulerX内的死循环和多进程，会增加调试难度
+- 访问http/https时需要特殊proxy、user-agent、cookie时，请修改HttpUtils中的get_proxy()、get_useragent()、get_cookie()及DownloaderX中的代码
+- 控制台输出日志时尽量不要使用系统内置的print()，请使用LogUtil.Log的d()、i()、w()、e()，它提供了更详尽的输出信息，并且日志也会被记录到mongodb的logs集合中，便于追溯
 - 执行过程中如果中途断掉，会产生state=doing的task，请在task全部执行完毕后将它们置为ready状态
-- 调试过程中需要经常初始化数据库，运行utils/InitUtils可以快速初始化，或者直接调用InitUtils的init()方法
+- 调试过程中需要经常初始化数据库，运行utils/InitUtil可以快速初始化，或者直接调用InitUtil的init()方法
 
 # xpath经验集
-- chrome的F12神器测试xpath命令：$x('xpath路径规则')
+
+- 【教程】 W3的xpath英文规范：https://www.w3.org/standards/techs/xpath#w3c_all
+- 【教程】 W3cschool的中文教程： http://www.w3school.com.cn/xpath/index.asp
+- 【教程】 微软的xpath中文示例： https://msdn.microsoft.com/zh-cn/library/ms256086(v=vs.120).aspx
+- 【经验】 chrome的F12神器测试xpath命令：$x('xpath路径规则')
 
 # regexp经验集
-
+- 【教程】 菜鸟教程之正则表达式 http://www.runoob.com/regexp/regexp-syntax.html
+- 【教程】 正则表达实验室教程  http://www.regexlab.com/zh/regref.htm
+- 【教程】 正则表达式在线测试 http://tool.oschina.net/regex/
+- 【经验】 使用正则表达式解析出赞的数量，注意要转换所有的&nbsp为标准空格，并去掉前后的空格
+```
+ptext='<p>本资源被赞了 35&nbsp;&nbsp; 次</p>'
+m = re.findall(r"赞了(.+?)次", ptext)
+cnt=m[0].replace('\xc2\xa0',' ').strip()
+```

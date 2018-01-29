@@ -10,7 +10,7 @@ config = configparser.ConfigParser()
 conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','configs','configs.ini')
 config.read(conf_file,encoding='UTF-8')
 
-class ConfigUtils(object):
+class ConfigUtil(object):
     '''
     读取ini配置文件
         ini文件结构如下：
@@ -72,5 +72,5 @@ class ConfigUtils(object):
         return config.getfloat(section, option)
 
 if __name__ == '__main__':
-    items=ConfigUtils.getItems('scheduler')
+    items=ConfigUtil.getItems('scheduler')
     print (items)

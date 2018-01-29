@@ -15,7 +15,7 @@ from configs import Settings
 from utils.ConfigUtils import ConfigUtils
 
 
-class log():
+class Log():
     '''
     日志处理类，输出到console和mongodb
     DEBUG,INFO, WARN，ERROR
@@ -30,7 +30,7 @@ class log():
         fileName = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
         lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
-        log._print('DEBUG', funcName + '(),' + fileName + ':' + str(lineNumber), text)
+        Log._print('DEBUG', funcName + '(),' + fileName + ':' + str(lineNumber), text)
         pass
 
     @staticmethod
@@ -43,7 +43,7 @@ class log():
         fileName = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
         lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
-        log._print('INFO', funcName + '(),' + fileName + ':' + str(lineNumber), text)
+        Log._print('INFO', funcName + '(),' + fileName + ':' + str(lineNumber), text)
         pass
 
     @staticmethod
@@ -56,7 +56,7 @@ class log():
         fileName = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
         lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
-        log._print('WARN', funcName + '(),' + fileName + ':' + str(lineNumber), text)
+        Log._print('WARN', funcName + '(),' + fileName + ':' + str(lineNumber), text)
         pass
 
     @staticmethod
@@ -69,7 +69,7 @@ class log():
         fileName = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
         lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
-        log._print('ERROR', funcName + '(),' + fileName + ':' + str(lineNumber), text)
+        Log._print('ERROR', funcName + '(),' + fileName + ':' + str(lineNumber), text)
         pass
 
     @staticmethod
@@ -103,7 +103,7 @@ class log():
         pass
 
 
-class MongoLog(threading.Thread):
+class _MongoLog(threading.Thread):
     '''
     Mongodb写log类
     '''
@@ -149,14 +149,14 @@ class MongoLog(threading.Thread):
                 client.close()
 
 #创建单例对象(内含对列)
-mongoLog=MongoLog()
+mongoLog=_MongoLog()
 mongoLog.start()
 
 def test():
-    log.d("hello world你好")
-    log.i("hello world你好你好")
-    log.w("hello world你好你好你好")
-    log.e("hello world你好你好你好你好")
+    Log.d("hello world你好")
+    Log.i("hello world你好你好")
+    Log.w("hello world你好你好你好")
+    Log.e("hello world你好你好你好你好")
 
 if __name__ == '__main__':
     test()

@@ -10,7 +10,7 @@ from utils.LogUtils import log
 from utils.TaskUtils import TaskUtils
 
 
-class Parser:
+class ParserX:
     '''
     Html解析器
     '''
@@ -38,8 +38,8 @@ class Parser:
         解析demo
         :return:
         '''
-        html = etree.HTML(self.task['response'])
-        nodes = html.xpath('//a[contains(@class,"nav")]')
+        root = etree.HTML(self.task['response'])
+        nodes = root.xpath('//a[contains(@class,"nav")]')
         items=[]
         for node in nodes:
             #解析学段
@@ -63,5 +63,5 @@ if __name__ == '__main__':
         'request': 'http://www.baidu.com',
         'response': '<html></html>'
     }
-    parser=Parser(task)
+    parser=ParserX(task)
     parser.run()

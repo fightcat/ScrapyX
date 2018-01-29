@@ -12,7 +12,7 @@ import datetime
 import traceback
 from utils.LogUtils import log
 
-class MongoUtils():
+class MongoUtil():
     '''
     mongo操作工具
     '''
@@ -288,6 +288,6 @@ if __name__ == '__main__':
     '''
     insert_data=[{'uptime': '2018-01-25 17:38:33.522000', 'uptimestamp': 1516873113997000.0}]
 
-    mongoUtils = MongoUtils()
+    mongoUtils = MongoUtil()
     mongoUtils.insert(collection_name='res_demo',insert_data=insert_data)
 

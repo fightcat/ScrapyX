@@ -11,7 +11,7 @@ from utils.InitUtils import InitUtils
 from utils.LogUtils import log
 
 
-class Downloader():
+class DownloaderX():
     '''
     下载器，访问http/ftp/ssh等
     1.获取response
@@ -57,6 +57,6 @@ if __name__ == '__main__':
         "request":"http://www.baidu.com",
         "parent":{}
     }
-    d=Downloader(task)
+    d=DownloaderX(task)
     d.run();
     pass

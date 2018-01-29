@@ -27,14 +27,16 @@ class DownloaderX():
         :return:
         '''
         Log.i ('Downloader.run()')
-        if self.task['parser'] in ['demo']:
-            self.get_default_html()
+        #利用反射机制自动执行download_<parser名>（）函数，如果找不到则执行默认的download_default()函数
+        if hasattr(self, 'download_'+self.task['parser']):
+            func = getattr(self, 'download_'+self.task['parser'])
+            func()
         else:
-            self.get_default_html()
+            self.download_default()
         parserX=ParserX(self.task)
         parserX.run()
 
-    def get_default_html(self):
+    def download_default(self):
         proxies = {
             "http": "http://"+HttpUtil.get_proxy()
         }
@@ -43,9 +45,12 @@ class DownloaderX():
             "User-Agent": HttpUtil.get_useragent()
         }
         cookies = None #不使用cookie
-        r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
+        r=None
+        if(self.task['request'].startswith('https://')):
+            r = HttpUtil.gets_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
+        else:
+            r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
         self.task['response'] = r
-        #log.d(self.task)
 
 if __name__ == '__main__':
     initUtil=InitUtil()
@@ -53,6 +58,7 @@ if __name__ == '__main__':
     task={
         "_id":"1",
         "state": "doing",
+        "table": "demo_info",
         "parser":"demo",
         "request":"http://www.baidu.com",
         "parent":{}

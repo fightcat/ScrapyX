@@ -6,6 +6,7 @@
 
 import os
 from pymongo import MongoClient
+from pymongo import ReturnDocument
 import configs.Setting as Setting
 import time
 import datetime
@@ -221,7 +222,7 @@ class MongoUtil():
         finally:
             return result
 
-    def find_and_update(self, collection_name, filter_dict, update_dict, insert=False, multi=False,auto_uptime=True):
+    def find_one_and_update(self, collection_name, filter_dict, update_dict, upsert=False, auto_uptime=True):
         """
         查找并更新表记录，默认返回false，保证原子性
         :param collection_name: str 集合名
@@ -243,7 +244,37 @@ class MongoUtil():
                 else:
                     update_dict['$set'] = {'uptime': uptime, 'uptimestamp': uptimestamp}
             collection = self.database.get_collection(collection_name)
-            document=collection.find_and_modify(filter_dict, update_dict, insert, multi)
+            document=collection.find_one_and_update(filter_dict, update_dict, upsert=upsert,return_document=ReturnDocument.AFTER)
+            result = document
+            if result is None:
+                Log.i("[INFO] find and update nothing!")
+            else:
+                Log.d("[INFO] find and update success!")
+        except Exception as e:
+            Log.e('find and update failed: %s' % e)
+        finally:
+            return result
+
+    def find_one_and_replace(self, collection_name, filter_dict, replace_dict, upsert=False, auto_uptime=True):
+        """
+        查找并更新表记录，默认返回false，保证原子性
+        :param collection_name: str 集合名
+        :param filter_dict: dict 过滤条件，如{'campaignId':{'$in':[1,2,3]}}
+        :param update_dict: dict 更新的字段，如{'$set':{status_key:0，'campaign.status':1},{'$unset':'campaign.name':'test_camp'}}
+        :param insert: bool 如果需要更新的记录不存在是否插入
+        :param multi: bool 是否更新所有符合条件的记录， False则只更新一条，True则更新所有
+        :return: Document 更新成功后的文档
+        """
+        result = None
+        try:
+            if auto_uptime:
+                timestamp = time.time()
+                uptimestamp = int(round(timestamp * 1000))
+                uptime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                replace_dict['uptime']=uptime
+                replace_dict['uptimestamp'] = uptimestamp
+            collection = self.database.get_collection(collection_name)
+            document=collection.find_one_and_replace(filter_dict, replace_dict, upsert=upsert,return_document=ReturnDocument.AFTER)
             result = document
             if result is None:
                 Log.i("[INFO] find and update nothing!")

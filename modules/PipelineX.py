@@ -27,16 +27,26 @@ class PipelineX:
         :return: 无
         '''
         Log.i ('Pipeline.run()')
-        if self.task['parser'] == 'demo':
-            self.save_info('demo_info')
+        if self.task['results'] is not None and len(self.task['results'])>0:
+            #下次任务入队列
+            if self.task['next_tasks'] is not None:
+                for next_task in self.task['next_tasks']:
+                    self.taskUtil.insert_one(next_task)
+            #本次解析结果入库
+            # 利用反射机制自动执行pipeline_<parser名>（）函数，如果找不到则执行默认的pipeline_default()函数
+            if hasattr(self, 'pipeline_' + self.task['parser']):
+                func = getattr(self, 'pipeline_' + self.task['parser'])
+                func()
+            else:
+                self.pipeline_default()
+            #将完整task存入mongo，并将本条task
+            self.task['state']='done'
+            self.taskUtil.replace_one(self.task['_id'], self.task)
         else:
+            #没有解析出结果，则表示中间出错了，等待下次再启动
             pass
-        #将本条task的状态置为done
-        if '_id' in self.task.keys():
-            self.taskUtil.set_state(self.task['_id'],'done')
-        pass
 
-    def save_info(self,collection_name):
+    def pipeline_default(self,collection_name):
         '''
         存储demo
         demo_info

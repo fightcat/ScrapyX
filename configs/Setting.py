@@ -17,6 +17,7 @@ MONGO_MECHANISM =None
 MONGO_USER = ''
 MONGO_PASSWORD = ''
 
-#初始Task配置(初始任务的解析器、Url，由Scheduler在调用TaskUtil的构造方法时调用创建第1个Task)
+#初始Task配置(初始任务的解析器、Url、表名，由Scheduler在调用TaskUtil的构造方法时调用创建第1个Task)
 FIRST_TASK_PARSER = 'demo'
 FIRST_TASK_URL = 'http://www.baidu.com'
+FIRST_TASK_TABLE = 'demo_info'

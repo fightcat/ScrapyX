@@ -24,14 +24,14 @@ class ParserX:
         :return:
         '''
         Log.i ('Parser.run()')
-        if self.task['parser'] in ['demo']:
-            self.parse_demo()
+        # 利用反射机制自动执行parse_<parser名>（）函数，如果找不到则执行默认的parse_default()函数
+        if hasattr(self, 'parse_' + self.task['parser']):
+            func = getattr(self, 'parse_' + self.task['parser'])
+            func()
         else:
-            pass
-
+            self.parse_default()
         pipelineX=PipelineX(self.task)
         pipelineX.run()
-
 
     def parse_demo(self):
         '''
@@ -41,6 +41,7 @@ class ParserX:
         root = etree.HTML(self.task['response'])
         nodes = root.xpath('//a[contains(@class,"nav")]')
         items=[]
+        next_tasks=[]
         for node in nodes:
             #解析学段
             item={}
@@ -48,13 +49,22 @@ class ParserX:
             item['name'] = node.text
             items.append(item)
             #解析下一任务,并插入任务队列
-            parent = {
-                'parent_id':item['_id'],
-                'parent_name':item['name']
+            next_task={
+                'parser': 'next',
+                'request': node.get('href'),
+                'table': 'next_info',
+                'parent': {
+                    'parent_id':item['_id'],
+                    'parent_name':item['name']
+                }
             }
-            self.taskUtil.insert_one(parser='next',request=node.get('href'),parent=parent)
-        #解析结果存入task
+            next_tasks.append(next_task)
+        #解析结果和下次任务存入task
         self.task['results']=items
+        self.task['next_tasks']=next_tasks
+
+    def parse_default(self):
+        pass
 
 if __name__ == '__main__':
     task ={

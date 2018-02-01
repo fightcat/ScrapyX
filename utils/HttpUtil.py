@@ -3,8 +3,9 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
+import os
 import requests
-
+from selenium.webdriver.common.proxy import ProxyType
 from utils.LogUtil import Log
 
 class HttpUtil:
@@ -159,29 +160,51 @@ class HttpUtil:
         return html
 
     @staticmethod
-    def get_useragent():
+    def deep_get(url,headers=None,proxies=None):
         '''
-        获取useragent
-        :return: string
+        深度get，使用PhantomJS处理javascript和302跳转
+        :param url:
+        :param headers: dict，http header，例：
+            headers = { 'Accept': '*/*',
+                        'Accept-Language': 'en-US,en;q=0.8',
+                        'Cache-Control': 'max-age=0',
+                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
+                        'Connection': 'keep-alive',
+                        'Cookie':'_ga=GA1.2.693027078.1517447891; _gid=GA1.2.390668217.1517447891'，
+                        'Referer':'http://www.baidu.com/'
+            }
+        :param proxies: dict，代理，例：
+            proxies = {
+                    "http": "http://127.0.0.1:8888"
+            }
+        :return: data,cookies
         '''
-        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36'
-
-    @staticmethod
-    def get_proxy():
-        '''
-        获取代理服务器地址及端口，格式ip:port
-        :return: string
-        '''
-        return '127.0.0.1:8888'
-
-    @staticmethod
-    def get_cookie():
-        '''
-        获取cookie
-        :return:
-        '''
-        return ''
+        from selenium import webdriver
+        from selenium.webdriver import DesiredCapabilities
+        desired_capabilities = DesiredCapabilities.PHANTOMJS.copy()
+        #自定义header
+        if headers is not None:
+            for key, value in headers.iteritems():
+                desired_capabilities['phantomjs.page.customHeaders.{}'.format(key)] = value
+        #自定义proxy
+        if proxies is not None:
+            proxy = webdriver.Proxy()
+            proxy.proxy_type = ProxyType.MANUAL
+            proxy.http_proxy = proxies['http']
+            proxy.add_to_capabilities(desired_capabilities)
+        #构建driver
+        driver = webdriver.PhantomJS(desired_capabilities=desired_capabilities,service_log_path=os.path.devnull)
+        #访问url
+        driver.get(url)
+        # 获取html页面源码
+        data = driver.page_source
+        # 获得cookie信息
+        cookies = driver.get_cookies()
+        driver.quit()
+        return data,cookies
 
 if __name__ == '__main__':
-    r=HttpUtil.get_html(url="http://www.736372726382863.com")
-    print(r)
+    #r=HttpUtil.get_html(url="http://www.736372726382863.com")
+    #print(r)
+    html,cookies=HttpUtil.deep_get('http://www.baidu.com')
+    print(html)

@@ -5,13 +5,15 @@
 @mail: 805349916@qq.com
 '''
 import sys
-
-from modules.SchedulerX import SchedulerX
+import importlib
+from configs import Setting
 
 def main():
     #执行任务计划
-    schedulerX = SchedulerX()
-    schedulerX.run()
+    schedulerModule = Setting.SCHEDULER_MODULE
+    SchedulerX = importlib.import_module(schedulerModule)
+    scheduler = SchedulerX.Scheduler()
+    scheduler.run()
 
 if __name__ == '__main__':
     #项目入口

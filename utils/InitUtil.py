@@ -30,3 +30,5 @@ if __name__ == '__main__':
         print('all data clear finished')
     else:
         print('Noting be clear, bye!')
+    #设置全局标志，让死循环的Log线程退出
+    setattr(Setting,'exit_flag',True)

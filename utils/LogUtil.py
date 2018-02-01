@@ -116,11 +116,17 @@ class _MongoLog(threading.Thread):
 
     def run(self):
         while True:
-            insert_data=self.queue.get()
-            if insert_data:
+            try:
+                insert_data=self.queue.get(block=False)
                 self._insert(insert_data=insert_data)
-            else:
-                time.sleep(2)
+            except  Exception as e:
+                exit_flag=getattr(Setting,'exit_flag',False)
+                if exit_flag:
+                    break
+                else:
+                    time.sleep(1)
+            finally:
+                pass
         pass
 
     def _insert(self,insert_data):
@@ -154,9 +160,9 @@ mongoLog.start()
 
 def test():
     Log.d("hello world你好")
-    Log.i("hello world你好你好")
-    Log.w("hello world你好你好你好")
-    Log.e("hello world你好你好你好你好")
+    #Log.i("hello world你好你好")
+    #Log.w("hello world你好你好你好")
+    #Log.e("hello world你好你好你好你好")
 
 if __name__ == '__main__':
     test()

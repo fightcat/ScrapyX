@@ -3,15 +3,16 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
+import importlib
 import threading
 
-from modules.ParserX import ParserX
+from configs import Setting
 from utils.HttpUtil import HttpUtil
 from utils.InitUtil import InitUtil
 from utils.LogUtil import Log
 
 
-class DownloaderX():
+class Downloader():
     '''
     下载器，访问http/ftp/ssh等
     1.获取response
@@ -33,23 +34,47 @@ class DownloaderX():
             func()
         else:
             self.download_default()
-        parserX=ParserX(self.task)
-        parserX.run()
+        #启动解析器
+        parserModule = Setting.PARSER_MODULE
+        ParserX = importlib.import_module(parserModule)
+        parser = ParserX.Parser(self.task)
+        parser.run()
 
     def download_default(self):
-        proxies = {
-            "http": "http://"+HttpUtil.get_proxy()
-        }
+        #配置代理服务器
         proxies = None  #不使用代理服务器
-        headers = {
-            "User-Agent": HttpUtil.get_useragent()
-        }
-        cookies = None #不使用cookie
+        if Setting.HTTP_PROXY is not None:
+            proxies = {
+                "http": "http://"+Setting.HTTP_PROXY
+            }
+        #配置Http header（User-Agent）
+        headers = None #不自定义header
+        if Setting.USER_AGENT is not None:
+            headers = {
+                "User-Agent": Setting.USER_AGENT
+            }
+        #配置referer
+        if Setting.REFERER is not None:
+            if headers is None:
+                headers = {
+                    "Referer": Setting.REFERER
+                }
+            else:
+                headers['Referer'] = Setting.REFERER
+        #配置cookies
+        if Setting.COOKIES is not None:
+            if headers is None:
+                headers = {
+                    "Cookie": Setting.COOKIES
+                }
+            else:
+                headers['Cookie'] = Setting.COOKIES
+        #请求HTTP
         r=None
         if(self.task['request'].startswith('https://')):
-            r = HttpUtil.gets_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
+            r = HttpUtil.gets_html(self.task['request'], headers=headers, proxies=proxies, cookies=None)
         else:
-            r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=cookies)
+            r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=None)
         self.task['response'] = r
 
 if __name__ == '__main__':
@@ -63,6 +88,6 @@ if __name__ == '__main__':
         "request":"http://www.baidu.com",
         "parent":{}
     }
-    d=DownloaderX(task)
+    d=Downloader(task)
     d.run();
     pass

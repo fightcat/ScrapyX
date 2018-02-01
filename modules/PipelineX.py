@@ -10,7 +10,7 @@ from utils.LogUtil import Log
 from utils.TaskUtil import TaskUtil
 from utils.MongoUtil import MongoUtil
 
-class PipelineX:
+class Pipeline():
     '''
     存储结果管道
     （不负责压next task）
@@ -36,15 +36,16 @@ class PipelineX:
             # 利用反射机制自动执行pipeline_<parser名>（）函数，如果找不到则执行默认的pipeline_default()函数
             if hasattr(self, 'pipeline_' + self.task['parser']):
                 func = getattr(self, 'pipeline_' + self.task['parser'])
-                func()
+                func(self.task['table'])
             else:
-                self.pipeline_default()
+                self.pipeline_default(self.task['table'])
             #将完整task存入mongo，并将本条task
             self.task['state']='done'
             self.taskUtil.replace_one(self.task['_id'], self.task)
         else:
             #没有解析出结果，则表示中间出错了，等待下次再启动
             pass
+        Log.i('this task is finished')
 
     def pipeline_default(self,collection_name):
         '''
@@ -76,5 +77,5 @@ if __name__ == '__main__':
         'parent':{},
         'response':''
     }
-    pipelineX = PipelineX(task)
+    pipelineX = Pipeline(task)
     pipelineX.run()

@@ -3,14 +3,13 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
-from lxml import etree
-
-from modules.PipelineX import PipelineX
+import importlib
+from configs import Setting
 from utils.LogUtil import Log
 from utils.TaskUtil import TaskUtil
 
 
-class ParserX:
+class Parser():
     '''
     Html解析器
     '''
@@ -30,40 +29,14 @@ class ParserX:
             func()
         else:
             self.parse_default()
-        pipelineX=PipelineX(self.task)
-        pipelineX.run()
-
-    def parse_demo(self):
-        '''
-        解析demo
-        :return:
-        '''
-        root = etree.HTML(self.task['response'])
-        nodes = root.xpath('//a[contains(@class,"nav")]')
-        items=[]
-        next_tasks=[]
-        for node in nodes:
-            #解析学段
-            item={}
-            item['_id'] = node.get('href')
-            item['name'] = node.text
-            items.append(item)
-            #解析下一任务,并插入任务队列
-            next_task={
-                'parser': 'next',
-                'request': node.get('href'),
-                'table': 'next_info',
-                'parent': {
-                    'parent_id':item['_id'],
-                    'parent_name':item['name']
-                }
-            }
-            next_tasks.append(next_task)
-        #解析结果和下次任务存入task
-        self.task['results']=items
-        self.task['next_tasks']=next_tasks
+        #启动Pipeline
+        pipelineModule = Setting.PIPELINE_MODULE
+        PipelineX = importlib.import_module(pipelineModule)
+        pipeline = PipelineX.Pipeline(self.task)
+        pipeline.run()
 
     def parse_default(self):
+        Log.i('run default parser ')
         pass
 
 if __name__ == '__main__':
@@ -73,5 +46,5 @@ if __name__ == '__main__':
         'request': 'http://www.baidu.com',
         'response': '<html></html>'
     }
-    parserX=ParserX(task)
+    parserX=Parser(task)
     parserX.run()

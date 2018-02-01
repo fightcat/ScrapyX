@@ -5,8 +5,10 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
-
-#Mongodb配置(主机、端口、数据库名)
+##############
+# Mongodb配置
+##############
+#Mongo主机和端口
 MONGO_HOST = '127.0.0.1'
 MONGO_PORT = 27017
 #Mongo数据库名
@@ -17,7 +19,33 @@ MONGO_MECHANISM =None
 MONGO_USER = ''
 MONGO_PASSWORD = ''
 
-#初始Task配置(初始任务的解析器、Url、表名，由Scheduler在调用TaskUtil的构造方法时调用创建第1个Task)
+
+###############
+# 初始Task配置
+###############
 FIRST_TASK_PARSER = 'demo'
 FIRST_TASK_URL = 'http://www.baidu.com'
 FIRST_TASK_TABLE = 'demo_info'
+
+
+###############
+# 模块配置
+###############
+SCHEDULER_MODULE = 'modules.SchedulerX'
+DOWNLOADER_MODULE = 'modules.DownloaderX'
+#PARSER_MODULE = 'modules.ParserX'
+PARSER_MODULE = 'demo.ParserDemo'
+PIPELINE_MODULE = 'modules.PipelineX'
+
+
+####################
+# Http request参数
+####################
+# http代理服务器配置，类型string，例如：127.0.0.1:8888
+HTTP_PROXY = None
+# http user_agent，类型string
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36'
+# http cookies，类型string，例如：_ga=GA1.2.693027078.1517447891; _gid=GA1.2.390668217.1517447891
+COOKIES = None
+# http referer，类型string，例如：http://www.cnblogs.com/zy6103/p/
+REFERER = None

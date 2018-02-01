@@ -3,17 +3,17 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
+import importlib
 import random
 import time
 from multiprocessing import Pool
-
-from modules.DownloaderX import DownloaderX
+from configs import Setting
 from utils.ConfigUtil import ConfigUtil
 from utils.LogUtil import Log
 from utils.TaskUtil import TaskUtil
 
 
-class SchedulerX:
+class Scheduler():
     '''
     调度器，
     1.从队列中取task
@@ -22,7 +22,6 @@ class SchedulerX:
     '''
     def __init__(self):
         self.taskUtil = TaskUtil()
-        pass
 
     @staticmethod
     def run_downloader(task):
@@ -31,8 +30,10 @@ class SchedulerX:
         :param task:
         :return:
         '''
-        downloaderX = DownloaderX(task)
-        downloaderX.run()
+        downloaderModule = Setting.DOWNLOADER_MODULE
+        DownloaderX = importlib.import_module(downloaderModule)
+        downloader = DownloaderX.Downloader(task)
+        downloader.run()
 
     def run(self):
         '''
@@ -61,5 +62,5 @@ class SchedulerX:
         log.i ('All subprocesses done.')
 
 if __name__ == '__main__':
-    scheduler=SchedulerX()
+    scheduler=Scheduler()
     scheduler.run()

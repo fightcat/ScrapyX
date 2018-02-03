@@ -66,15 +66,13 @@ class XpathUtil():
         :param default: string，取不到时的默认值
         :return: string，匹配到的属性值
         '''
-        result=None
+        result=default
         attrs = node.xpath(xpath)
         if attrs is not None and len(attrs) >= 1:
             if trim:
                 result=XpathUtil.htmltrim(str(attrs[0]))
             else:
                 result=str(attrs[0])
-        if result is None:
-            result=default;
         return result
 
     @staticmethod
@@ -86,14 +84,12 @@ class XpathUtil():
         :param trim: bool，是否转义&nbsp，并去掉前后空格
         :return: string，属性值，转义&nbsp，并去掉了前后空格
         '''
-        result=None
+        result=default
         if attrib in node.attrib:
             if trim:
                 result = XpathUtil.htmltrim(str(node.attrib[attrib]))
             else:
                 result = str(node.attrib[attrib])
-        if result is None:
-            result=default;
         return result
 
     @staticmethod
@@ -112,11 +108,12 @@ class XpathUtil():
         '''
         从node中匹配xpath，返回第1个innerText文本信息
         :param node: _Element，待匹配的父节点
-        :param xpath: string，xpath路径
+        :param xpath: string，xpath路径，以/text()结尾
         :param trim: bool，是否转义&nbsp，并去掉前后空格
+        :param default: string，默认值
         :return: string，匹配到的innerText文本信息
         '''
-        result = None
+        result = default
         texts = node.xpath(xpath)
         if texts is not None and len(texts) >= 1:
             if trim:
@@ -128,6 +125,41 @@ class XpathUtil():
         return result
 
     @staticmethod
+    def getJoinText(node, xpath, split='',trim=True, default=None):
+        '''
+        从node中匹配xpath，返回text()，使用split拼接
+        :param node: _Element，待匹配的父节点
+        :param xpath: string，xpath路径，以/text()结尾
+        :param split: string, 连接时的分隔符，如空格、-、\t、\n等
+        :param trim: bool，是否转义&nbsp，并去掉前后空格
+        :param default: string，默认值
+        :return: stirng，以split连接的文本
+        '''
+        result=default;
+        texts=__class__.getTexts(node,xpath)
+        result=split.join(texts)
+        if trim:
+            result=__class__.htmltrim(result)
+        return result;
+
+    @staticmethod
+    def getNodeAllText(node, trim=True, default=None):
+        '''
+        从node中匹配xpath，返回text()，使用split拼接
+        :param node: _Element，待匹配的父节点
+        :param xpath: string，xpath路径，以/text()结尾
+        :param split: string, 连接时的分隔符，如空格、-、\t、\n等
+        :param trim: bool，是否转义&nbsp，并去掉前后空格
+        :param default: string，默认值
+        :return: stirng，以split连接的文本
+        '''
+        result=default;
+        result=node.xpath('string(.)')
+        if trim:
+            result=__class__.htmltrim(result)
+        return result;
+
+    @staticmethod
     def htmltrim(str):
         '''
         对str源字符串替换&nbsp为正常空格，并去掉首尾空格
@@ -136,8 +168,17 @@ class XpathUtil():
         '''
         return str.replace('\xc2\xa0', ' ').strip()
 
+    @staticmethod
+    def mergeBlank(str):
+        '''
+        合并连续空格为单1空格
+        :param str:
+        :return:
+        '''
+        return ' '.join(str.split())
+
 if __name__ == '__main__':
-    html='<div><p class="nav">导航123GO</p><p>  空&nbsp;格&nbsp;    </p></div>'
+    html='<div><p class="nav">导航123GO</p>                           <p>     空&nbsp;格&nbsp;    </p></div>'
     root=XpathUtil.getRoot(html)
     nodes=XpathUtil.getNodes(root,'//div/p')
     node=XpathUtil.getNode(root,'//div/p')
@@ -145,4 +186,6 @@ if __name__ == '__main__':
     attrib=XpathUtil.getAttrib(root,'//div/p/@class')
     attrib=XpathUtil.getNodeAttrib(root,'class')
     innerText = XpathUtil.getText(root, '//div/p/text()')
-    print(innerText)
+    text=XpathUtil.getJoinText(root,'//div/p/text()',split='\n',trim=False)
+    text=XpathUtil.mergeBlank(text)
+    print(text)

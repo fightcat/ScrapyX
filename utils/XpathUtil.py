@@ -172,8 +172,8 @@ class XpathUtil():
     def mergeBlank(str):
         '''
         合并连续空格为单1空格
-        :param str:
-        :return:
+        :param str: 源串
+        :return: 返回去掉多余空格的最终串
         '''
         return ' '.join(str.split())
 

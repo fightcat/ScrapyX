@@ -29,7 +29,7 @@ class Pipeline():
         Log.i ('Pipeline.run()')
         if self.task['results'] is not None and len(self.task['results'])>0:
             #下次任务入队列
-            if self.task['next_tasks'] is not None:
+            if 'next_tasks' in self.task and self.task['next_tasks'] is not None:
                 for next_task in self.task['next_tasks']:
                     self.taskUtil.insert_one(next_task)
             #本次解析结果入库

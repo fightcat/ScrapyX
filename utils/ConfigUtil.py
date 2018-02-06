@@ -6,9 +6,7 @@
 import configparser
 import os
 
-config = configparser.ConfigParser()
-conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','configs','config.ini')
-config.read(conf_file,encoding='UTF-8')
+
 
 class ConfigUtil(object):
     '''
@@ -23,13 +21,24 @@ class ConfigUtil(object):
         pass
 
     @staticmethod
+    def _getConfig():
+        '''
+        获取config对象
+        :return: config对象
+        '''
+        config = configparser.ConfigParser()
+        conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'configs', 'config.ini')
+        config.read(conf_file, encoding='UTF-8')
+        return config
+
+    @staticmethod
     def getItems(section):
         '''
         获取section下所有kv对
         :param section: section名
         :return:
         '''
-        return config._sections[section]
+        return __class__._getConfig()._sections[section]
 
     @staticmethod
     def get(section,option):
@@ -39,7 +48,7 @@ class ConfigUtil(object):
         :param option: option名
         :return:object
         '''
-        return config.get(section,option)
+        return __class__._getConfig().get(section,option)
 
     @staticmethod
     def getInt(section,option):
@@ -49,7 +58,7 @@ class ConfigUtil(object):
         :param option:
         :return:int
         '''
-        return config.getint(section,option)
+        return __class__._getConfig().getint(section,option)
 
     @staticmethod
     def getBoolean(section,option):
@@ -59,7 +68,7 @@ class ConfigUtil(object):
         :param option:
         :return:int
         '''
-        return config.getboolean(section,option)
+        return __class__._getConfig().getboolean(section,option)
 
     @staticmethod
     def getFloat(section, option):
@@ -69,7 +78,7 @@ class ConfigUtil(object):
         :param option:
         :return:int
         '''
-        return config.getfloat(section, option)
+        return __class__._getConfig().getfloat(section, option)
 
 if __name__ == '__main__':
     items=ConfigUtil.getItems('scheduler')

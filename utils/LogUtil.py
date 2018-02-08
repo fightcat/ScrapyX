@@ -79,28 +79,32 @@ class Log():
         :param self:
         :return: 无
         '''
-        timestamp = time.time()
-        log_timestamp = int(round(timestamp * 1000))
-        log_timestring = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        pid=os.getpid()
-        #将log写入console
-        config_level = ConfigUtil.get('log', 'level')
-        enum_level=['DEBUG', 'INFO', 'WARN', 'ERROR']
-        level_index=enum_level.index(level) if level in enum_level else -1
-        config_level_index=enum_level.index(config_level) if config_level in enum_level else -1
-        if level_index >= config_level_index and level_index>=0 and config_level_index>=0:
-            print('[%s] [%s] [%d] [%s]: %s' % (log_timestring,level,pid,source,text))
-        #启动线程将log写入mongodb的logs集合
-        logdict={
-            'timestamp':log_timestamp,
-            'timestring':log_timestring,
-            'level':level,
-            'pid':pid,
-            'source':source,
-            'text':text
-        }
-        mongoLog.put_queue(logdict)
-        pass
+        try:
+            timestamp = time.time()
+            log_timestamp = int(round(timestamp * 1000))
+            log_timestring = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            pid=os.getpid()
+            #将log写入console
+            config_level = ConfigUtil.get('log', 'level')
+            enum_level=['DEBUG', 'INFO', 'WARN', 'ERROR']
+            level_index=enum_level.index(level) if level in enum_level else -1
+            config_level_index=enum_level.index(config_level) if config_level in enum_level else -1
+            if level_index >= config_level_index and level_index>=0 and config_level_index>=0:
+                print('[%s] [%s] [%d] [%s]: %s' % (log_timestring,level,pid,source,text))
+            #启动线程将log写入mongodb的logs集合
+            logdict={
+                'timestamp':log_timestamp,
+                'timestring':log_timestring,
+                'level':level,
+                'pid':pid,
+                'source':source,
+                'text':text
+            }
+            mongoLog.put_queue(logdict)
+        except Exception as e:
+            pass
+        finally:
+            pass
 
 
 class _MongoLog(threading.Thread):

@@ -19,15 +19,6 @@ MONGO_MECHANISM =None
 MONGO_USER = ''
 MONGO_PASSWORD = ''
 
-
-###############
-# 初始Task配置
-###############
-FIRST_TASK_PARSER = 'demo'
-FIRST_TASK_URL = 'http://www.baidu.com'
-FIRST_TASK_TABLE = 'demo_info'
-
-
 ###############
 # 模块配置
 ###############
@@ -36,7 +27,6 @@ DOWNLOADER_MODULE = 'modules.DownloaderX'
 #PARSER_MODULE = 'modules.ParserX'
 PARSER_MODULE = 'demo.ParserDemo'
 PIPELINE_MODULE = 'modules.PipelineX'
-
 
 ####################
 # Http request参数

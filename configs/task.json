@@ -1,0 +1,9 @@
+[
+  {
+    "state":"ready",
+    "parse":"demo",
+    "request":"http://www.baidu.com",
+    "table":"demo_info",
+    "parent":{}
+  }
+]

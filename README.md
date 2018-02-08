@@ -34,6 +34,7 @@
 |[configs] |配置集|
 |....config.ini |运行时可变的配置 |
 |....Setting.py |运行时不可变的配置 |
+|....task.json |初始任务配置 |
 |[demo] |样例 |
 |....ParserDemo.py |自定义的Demo解析器类示例 |
 |[modules] |模块集 |
@@ -145,7 +146,8 @@
 
 #### 第2步：修改初始配置configs
 - 修改configs/conifg.ini，手动配置"任务间隔秒数"、"日志显示级别"等
-- 修改configs/Setting.py, 手动配置"Mongodb连接参数"、"初始task的解析器、url、table"等
+- 修改configs/Setting.py, 手动配置"Mongodb连接参数"、"module配置"、"http请求头"等
+- 修改configs/task.json，手动配置初始task的parser、request、table、parent等
 
 #### 第3步：创建自定义模块包
 - 根据要爬取的目标网站创建自定义的包，例如要爬取 www.demo.com 网站资源,则可以创建包名为demo的文件夹（以下步骤以自定义包名为demo为示例）

@@ -3,6 +3,7 @@
 @author: tieqiang Xu
 @mail: 805349916@qq.com
 '''
+import json
 
 from utils.MongoUtil import MongoUtil
 import os
@@ -25,16 +26,12 @@ class TaskUtil:
         self.mongoUtil = MongoUtil()
         count=self.mongoUtil.count(collection_name='tasks')
         if count==0:
-            first_task_parser = Setting.FIRST_TASK_PARSER
-            first_task_url = Setting.FIRST_TASK_URL
-            first_task_table = Setting.FIRST_TASK_TABLE
-            insert_data = {
-                "parser": first_task_parser,
-                "request": first_task_url,
-                "table": first_task_table,
-                "parent":{},
-                "state": "ready"
-            }
+            task=None
+            task_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'configs', 'task.json')
+            f = open(task_file,encoding='utf-8')
+            task=f.read()
+            f.close()
+            insert_data=json.loads(task)
             self.mongoUtil.insert(collection_name='tasks', insert_data=insert_data)
 
     def get_ready(self):

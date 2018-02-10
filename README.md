@@ -6,6 +6,7 @@
 - 欢迎fork，请给star，O(∩_∩)O~
 
 # TODO Plan
+- Parser解析完验证task结构
 - WindowsXP下多进程无法执行问题
 - state=doing的task，重置时机
 - task全部执行完成的时机

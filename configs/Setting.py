@@ -39,3 +39,5 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 COOKIES = None
 # http referer，类型string，例如：http://www.cnblogs.com/zy6103/p/
 REFERER = None
+# response的charset，类型string，根据网页的字符集设置，例如：utf-8、gb2312，GBK等
+CHARSET= 'utf-8'

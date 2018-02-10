@@ -44,7 +44,7 @@ class RegexpUtil():
         :param end_string: string，结束串
         :return: string 返回中间部分字符串列表
         '''
-        m = re.findall(start_string+"(.+?)"+end_string, source)
+        m = re.findall(start_string+"(.*)"+end_string, source)
         return m
 
     @staticmethod
@@ -58,7 +58,7 @@ class RegexpUtil():
         :return: string 返回中间部分字符串
         '''
         result=None
-        m = re.findall(start_string + "(.+?)" + end_string, source)
+        m = re.findall(start_string + "(.*)" + end_string, source)
         if m is not None and len(m)>=1:
             result=m[0]
         return result

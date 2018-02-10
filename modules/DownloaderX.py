@@ -69,12 +69,16 @@ class Downloader():
                 }
             else:
                 headers['Cookie'] = Setting.COOKIES
+        #配置Charset
+        charset='utf-8'
+        if Setting.CHARSET is not None:
+            charset=Setting.CHARSET
         #请求HTTP
         r=None
         if(self.task['request'].startswith('https://')):
-            r = HttpUtil.gets_html(self.task['request'], headers=headers, proxies=proxies, cookies=None)
+            r = HttpUtil.gets_html(self.task['request'], headers=headers, proxies=proxies, cookies=None, charset=charset)
         else:
-            r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=None)
+            r = HttpUtil.get_html(self.task['request'], headers=headers, proxies=proxies, cookies=None, charset=charset)
         self.task['response'] = r
 
 if __name__ == '__main__':
